@@ -12407,6 +12407,27 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+local Players = game:GetService("Players")
+
+-- Function to activate the rocket through Remote
+local function fireRocket()
+    local args = {
+        [1] = Enum.KeyCode.Q
+    }
+
+    -- Sending event to the server
+    local player = Players.LocalPlayer
+    player.Character.CrimsonPeriastron.Remote:FireServer(unpack(args))
+
+    -- You can repeat the call if needed to activate rockets multiple times
+end
+
+-- Command to activate the rocket
+addcmd('redkill', {}, function(args, speaker)
+    fireRocket() -- Calls the function to activate the rocket
+end)
+
+
 function spawnRocket(targetPlayer)
     print('fire')
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
