@@ -12407,6 +12407,27 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+
+function spawnGravity(targetPlayer)
+    print('Fire')
+    local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция цели
+    local args = {
+        [1] = "Fire",
+        [2] = targetPosition + Vector3.new(0, 5, 0) -- Позиция немного выше, чтобы не застрять в земле
+    }
+
+    -- Отправляем событие на сервер
+    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Gravity Inducer").WeaponEvent:FireServer(unpack(args))
+end
+
+addcmd('killgravity', {}, function(args, speaker)
+    local players = getPlayer(args[1], speaker)
+    for i, v in pairs(players) do
+        spawnGravity(Players[v])
+    end
+end)
+
+
 function spawnRocket(targetPlayer)
     print('fire')
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
