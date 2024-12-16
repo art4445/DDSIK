@@ -12427,6 +12427,26 @@ addcmd('killgravity', {}, function(args, speaker)
     end
 end)
 
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+
+-- Функция для ослепления всех игроков
+local function blindPlayers()
+    -- Увеличиваем яркость
+    Lighting.Brightness = 10 -- Настройте яркость как нужно
+    Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255) -- Измените цвет окружающего освещения
+
+    -- Длительность эффекта ослепления
+    wait(3) -- Ослепление на 3 секунды
+
+    -- Восстановление исходных значений
+    Lighting.Brightness = 2 -- Восстановите исходную яркость
+    Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128) -- Первоначальный цвет освещения
+end
+
+-- Пример использования
+blindPlayers()
+
 
 function spawnRocket(targetPlayer)
     print('fire')
