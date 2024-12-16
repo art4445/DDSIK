@@ -12407,33 +12407,20 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- Функция для спавна ракеты
 local function spawnRocket(targetPlayer)
-    if targetPlayer and targetPlayer.Character then
-        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 10, 0) -- Позиция немного выше, чтобы ракета не застряла в земле
-        local rocketSpawnPosition = Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
-
-        -- Определяем параметры ракеты
-        local args = {
-            [1] = rocketSpawnPosition, -- Позиция спавна
-            [2] = targetPosition -- Позиция цели
-        }
-
-        -- Вызываем эвент для спавна ракеты
-        Players.LocalPlayer.Character.RocketJumper.FireRocket:FireServer(unpack(args))
+    if targetPlayer then
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
+        local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
+    game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
     end
 end
--- Команда для спавна ракет
+
 addcmd('firerocket', {}, function(args, speaker)
-    local targetPlayers = getPlayer(args[1], speaker) -- Получение списка игроков
+    local targetPlayers = getPlayer(args[1], speaker) 
     for _, player in ipairs(targetPlayers) do
-        spawnRocket(player) -- Спавн ракеты к каждому игроку
+        spawnRocket(player) 
     end
 end)
-
 
 addcmd('dupe',{},function(args, speaker)
 	    local stool
