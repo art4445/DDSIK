@@ -12407,47 +12407,6 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
-
-function spawnGravity(targetPlayer)
-    print('Fire')
-    local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция цели
-    local args = {
-        [1] = "Fire",
-        [2] = targetPosition + Vector3.new(0, 5, 0) -- Позиция немного выше, чтобы не застрять в земле
-    }
-
-    -- Отправляем событие на сервер
-    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Gravity Inducer").WeaponEvent:FireServer(unpack(args))
-end
-
-addcmd('killgravity', {}, function(args, speaker)
-    local players = getPlayer(args[1], speaker)
-    for i, v in pairs(players) do
-        spawnGravity(Players[v])
-    end
-end)
-
-local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
-
--- Функция для ослепления всех игроков
-local function blindPlayers()
-    -- Увеличиваем яркость
-    Lighting.Brightness = 10 -- Настройте яркость как нужно
-    Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255) -- Измените цвет окружающего освещения
-
-    -- Длительность эффекта ослепления
-    wait(3) -- Ослепление на 3 секунды
-
-    -- Восстановление исходных значений
-    Lighting.Brightness = 2 -- Восстановите исходную яркость
-    Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128) -- Первоначальный цвет освещения
-end
-
--- Пример использования
-blindPlayers()
-
-
 function spawnRocket(targetPlayer)
     print('fire')
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
