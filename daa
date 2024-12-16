@@ -12407,6 +12407,9 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 -- Функция для спавна ракеты
 local function spawnRocket(targetPlayer)
     if targetPlayer and targetPlayer.Character then
