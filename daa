@@ -12418,7 +12418,6 @@ function spawnRocket(targetPlayer)
     game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
 end
 
-
 addcmd('AirKill', {}, function(args, speaker)
     local players = getPlayer(args[1], speaker)  -- Получаем целевых игроков из аргументов
 
@@ -12437,7 +12436,6 @@ addcmd('AirKill', {}, function(args, speaker)
     -- Исполнение команды нажатия мыши, например, для Tactical Airstrike
     Players.LocalPlayer.Character:FindFirstChild("Tactical Airstrike").OnMouseClick:FireServer(unpack(args))
 end)
-
 
 
 local Players = game:GetService("Players")
