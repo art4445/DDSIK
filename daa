@@ -12408,6 +12408,44 @@ addcmd("giveblocks", {}, function(args, speaker)
 end)
 
 local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local UIS = game:GetService("UserInputService")
+
+-- Функция для копирования текста в буфер обмена
+local function copyToClipboard(text)
+    setclipboard(text) -- Записывает текст в буфер обмена
+end
+
+-- Функция для проверки имени оружия
+local function checkHeldWeapon()
+    local character = Player.Character
+    if character then
+        local tool = character:FindFirstChildOfClass("Tool") -- Находит первый инструмент в персонаже
+        if tool then
+            local weaponName = tool.Name
+            copyToClipboard(weaponName) -- Копируем название в буфер обмена
+            print("Скопировано в буфер обмена: " .. weaponName) -- Для отладки
+        else
+            print("Вы не держите оружие.")
+        end
+    else
+        print("Персонаж не найден.")
+    end
+end
+
+-- Обработка команд в чате
+local function onChatted(message)
+    if message:lower() == "namew" then -- Проверяем, если команда "NameW"
+        checkHeldWeapon() -- Вызываем функцию для проверки оружия
+    end
+end
+
+-- Привязываем обработчик к событию чата
+Player.Chatted:Connect(onChatted)
+
+
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Command to give a specific weapon
