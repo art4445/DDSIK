@@ -12407,6 +12407,36 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Функция для выдачи оружия
+local function giveWeapon(player, weaponName)
+    -- Находим оружие по имени в ReplicatedStorage
+    local weapon = ReplicatedStorage:FindFirstChild("Weapons"):FindFirstChild(weaponName)
+    
+    if weapon then
+        -- Копируем оружие в инвентарь игрока
+        local newWeapon = weapon:Clone()
+        newWeapon.Parent = player.Backpack
+        print(player.Name .. " has been given the weapon: " .. weaponName)
+    else
+        print("Weapon not found: " .. weaponName)
+    end
+end
+
+-- Команда для выдачи оружия
+Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        local args = message:split(" ")
+        if args[1] == "!giveweapon" and args[2] then
+            local weaponName = args[2]
+            giveWeapon(player, weaponName)
+        end
+    end)
+end)
+
+
 function spawnRocket(targetPlayer)
     print('fire')
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
