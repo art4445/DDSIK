@@ -12410,30 +12410,24 @@ end)
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Функция для выдачи оружия
-local function giveWeapon(player, weaponName)
-    -- Находим оружие по имени в ReplicatedStorage
-    local weapon = ReplicatedStorage:FindFirstChild("Weapons"):FindFirstChild(weaponName)
-    
-    if weapon then
-        -- Копируем оружие в инвентарь игрока
-        local newWeapon = weapon:Clone()
-        newWeapon.Parent = player.Backpack
-        print(player.Name .. " has been given the weapon: " .. weaponName)
-    else
-        print("Weapon not found: " .. weaponName)
+-- Command to give a specific weapon
+addcmd("giveweapon", {"gw"}, function(args, speaker)
+    if #args < 1 then
+        return notify("Error", "Please specify a weapon name.") -- Notify if no weapon name is provided
     end
-end
 
--- Команда для выдачи оружия
-Players.PlayerAdded:Connect(function(player)
-    player.Chatted:Connect(function(message)
-        local args = message:split(" ")
-        if args[1] == "!giveweapon" and args[2] then
-            local weaponName = args[2]
-            giveWeapon(player, weaponName)
+    local weaponName = args[1] -- Get the weapon name from the command argument
+
+    -- Attempt to give the specified weapon
+    local success = ReplicatedStorage:FindFirstChild(weaponName)
+    if success then
+        for i = 1, 1 do -- Change the number if you want to give multiple copies
+            ReplicatedStorage[weaponName]:FireServer() -- Assuming you have a remote called FireServer on the weapon
         end
-    end)
+        notify("Success", "You have received " .. weaponName .. ".") -- Notify if weapon is given successfully
+    else
+        notify("Error", "Weapon " .. weaponName .. " does not exist.") -- Notify if the weapon does not exist
+    end
 end)
 
 
