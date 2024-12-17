@@ -12408,6 +12408,37 @@ addcmd("giveblocks", {}, function(args, speaker)
 end)
 
 local Players = game:GetService("Players")
+
+function spawnRocket(targetPlayer)
+    print('Firing rocket at ' .. targetPlayer.Name)
+    local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+    local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0)  -- позиция спавна ракеты
+
+    -- Исполнение команды FireRocket
+    game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
+end
+
+addcmd('AirKill', {}, function(args, speaker)
+    local players = getPlayer(args[1], speaker)  -- Получаем целевых игроков из аргументов
+
+    for i, v in pairs(players) do
+        if Players:FindFirstChild(v) and Players[v].Character then
+            spawnRocket(Players[v])  -- Убираем ракету к указанному игроку
+        else
+            print(v .. " не найден или не имеет персонажа.")
+        end
+    end
+
+    local args = {
+        [1] = Vector3.new(координаты_x, координаты_y, координаты_z) -- Замените целевые координаты по необходимости
+    }
+
+    -- Исполнение команды нажатия мыши, например, для Tactical Airstrike
+    Players.LocalPlayer.Character:FindFirstChild("Tactical Airstrike").OnMouseClick:FireServer(unpack(args))
+end)
+
+
+local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local UIS = game:GetService("UserInputService")
