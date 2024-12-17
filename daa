@@ -12483,6 +12483,35 @@ addcmd('firerocket', {}, function(args, speaker)
     end
 end)
 
+local Players = game:GetService("Players")
+
+-- Функция для выполнения атаки Tactical Airstrike
+local function performAirstrike()
+    local player = Players.LocalPlayer -- Получаем локального игрока
+    local character = player.Character
+    if character then
+        local args = {
+            [1] = Vector3.new(0, 50, 0) -- Замените на желаемые координаты
+        }
+        
+        local tacticalAirstrike = character:FindFirstChild("Tactical Airstrike")
+        if tacticalAirstrike and tacticalAirstrike:IsA("Tool") then
+            tacticalAirstrike.OnMouseClick:FireServer(unpack(args)) -- Активируем ивент
+            print("Tactical Airstrike activated!") -- Для отладки
+        else
+            print("Tactical Airstrike tool not found in character.")
+        end
+    else
+        print("Character not found.")
+    end
+end
+
+-- Обработка команд
+game.Players.LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == "blind" then -- Проверяем, если команда "blind"
+        performAirstrike() -- Вызываем функцию для атаки
+    end
+end)
 
 
 addcmd('dupe',{},function(args, speaker)
