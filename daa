@@ -12408,42 +12408,25 @@ addcmd("giveblocks", {}, function(args, speaker)
 end)
 
 
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-local UIS = game:GetService("UserInputService")
+addcmd('copytoolname', {'ctn'}, function(args, speaker)
+    local character = speaker.Character or speaker.CharacterAdded:Wait()
+    if not character then
+        notify("Character not found.")
+        return
+    end
 
--- Функция для копирования текста в буфер обмена
-local function copyToClipboard(text)
-    setclipboard(text) -- Записывает текст в буфер обмена
-end
-
--- Функция для проверки имени оружия
-local function checkHeldWeapon()
-    local character = Player.Character
-    if character then
-        local tool = character:FindFirstChildOfClass("Tool") -- Находит первый инструмент в персонаже
-        if tool then
-            local weaponName = tool.Name
-            copyToClipboard(weaponName) -- Копируем название в буфер обмена
-            print("Скопировано в буфер обмена: " .. weaponName) -- Для отладки
-        else
-            print("Вы не держите оружие.")
+    local tools = character:GetChildren() 
+    for _, tool in ipairs(tools) do
+        if tool:IsA("Tool") then 
+            local toolName = tool.Name 
+            toClipboard(toolName) 
+            notify("Tool name copied to clipboard: " .. toolName) 
+            return 
         end
-    else
-        print("Персонаж не найден.")
     end
-end
 
--- Обработка команд в чате
-local function onChatted(message)
-    if message:lower() == "namew" then -- Проверяем, если команда "NameW"
-        checkHeldWeapon() -- Вызываем функцию для проверки оружия
-    end
-end
-
--- Привязываем обработчик к событию чата
-Player.Chatted:Connect(onChatted)
+    notify("No tools found in your character.") 
+end)
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
