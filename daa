@@ -12460,22 +12460,13 @@ local Tab = Window:NextTab("Scripts")
 
 local Section = Tab:NewSection("Section Name")
 
--- Переменная для хранения состояния меню
-local menuActive = false
-
--- Функция для переключения состояния меню
-local function toggleMenu()
-    menuActive = not menuActive
-    Window:Toggle(menuActive) -- Предполагаем, что Toggle меняет состояние GUI
-end
-
 Section:NewToggle("ToggleText", "ToggleInfo", function(state)
     if state then
         function spawnRocket(targetPlayer)
             if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
                 print('fire')
-                local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
-                local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0)
+                local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
+                local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
                 game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
             else
                 print("Target player not valid.")
@@ -12490,13 +12481,6 @@ Section:NewToggle("ToggleText", "ToggleInfo", function(state)
         end)
     else
         -- Если нужно что-то сделать при отключении, добавьте логику здесь
-    end
-end)
-
--- Обработка команды chat для открытия/закрытия меню
-game.Players.LocalPlayer.Chatted:Connect(function(message)
-    if message:lower() == "menu2" then
-        toggleMenu() -- Переключаем состояние меню
     end
 end)
 
