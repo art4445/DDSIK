@@ -12452,38 +12452,65 @@ addcmd("giveweapon", {"gw"}, function(args, speaker)
 end)
 
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Robojini/Tuturial_UI/refs/heads/main/UI_Template_1"))()
+function spawnRocket(targetPlayer)
+    print('fire')
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
+        local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
+    game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
+end
 
-local Window = Library.CreateLib("Name", "RJTheme3")
-
-local Tab = Window:NextTab("Scripts")
-
-local Section = Tab:NewSection("Section Name")
-
-Section:NewToggle("ToggleText", "ToggleInfo", function(state)
-    if state then
-        function spawnRocket(targetPlayer)
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                print('fire')
-                local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
-                local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
-                game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
-            else
-                print("Target player not valid.")
-            end
-        end
-
-        addcmd('firerocket', {}, function(args, speaker)
-            local players = getPlayer(args[1], speaker)
-            for _, v in pairs(players) do
-                spawnRocket(Players[v])
-            end
-        end)
-    else
-        -- Если нужно что-то сделать при отключении, добавьте логику здесь
+addcmd('firerocket', {}, function(args, speaker)
+    local players = getPlayer(args[1], speaker)
+    for i,v in pairs(players) do
+        spawnRocket(Players[v])
     end
 end)
 
+<pre><code class="lua">local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui") 
+
+-- Создание нового GUI (изначально невидимо)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = playerGui
+screenGui.Enabled = false -- GUI выключен по умолчанию
+
+local coordLabel = Instance.new("TextLabel")
+coordLabel.Size = UDim2.new(0, 300, 0, 50)
+coordLabel.Position = UDim2.new(0.5, -150, 0, 20)
+coordLabel.BackgroundTransparency = 0.5
+coordLabel.TextColor3 = Color3.new(1, 1, 1)
+coordLabel.TextScaled = true
+coordLabel.Text = "Координаты: (X, Y, Z)"
+coordLabel.Parent = screenGui
+
+-- Функция для обновления координат
+local function updateCoordinates()
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local position = player.Character.HumanoidRootPart.Position
+        coordLabel.Text = string.format("Координаты: (X: %.2f, Y: %.2f, Z: %.2f)", position.X, position.Y, position.Z)
+    end
+end
+
+-- Функция для переключения видимости GUI
+local function toggleCoordinates()
+    screenGui.Enabled = not screenGui.Enabled
+    if screenGui.Enabled then
+        -- Запускаем обновление координат, если GUI включен
+        while screenGui.Enabled do
+            updateCoordinates()
+            wait(0.1)
+        end
+    end
+end
+
+-- Обработка команды в чате
+player.Chatted:Connect(function(message)
+    if string.lower(message) == "menu2" then
+        toggleCoordinates()
+    end
+end)
+</code></pre>
 
 
 addcmd('dupe',{},function(args, speaker)
