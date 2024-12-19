@@ -12452,47 +12452,51 @@ addcmd("giveweapon", {"gw"}, function(args, speaker)
 end)
 
 
-function spawnRocket(targetPlayer)
-    print('fire')
-        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
-        local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
-    game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Robojini/Tuturial_UI/refs/heads/main/UI_Template_1"))()
+
+local Window = Library.CreateLib("Name", "RJTheme3")
+
+local Tab = Window:NextTab("Scripts")
+
+local Section = Tab:NewSection("Section Name")
+
+-- Переменная для хранения состояния меню
+local menuActive = false
+
+-- Функция для переключения состояния меню
+local function toggleMenu()
+    menuActive = not menuActive
+    Window:Toggle(menuActive) -- Предполагаем, что Toggle меняет состояние GUI
 end
 
-addcmd('firerocket', {}, function(args, speaker)
-    local players = getPlayer(args[1], speaker)
-    for i,v in pairs(players) do
-        spawnRocket(Players[v])
+Section:NewToggle("ToggleText", "ToggleInfo", function(state)
+    if state then
+        function spawnRocket(targetPlayer)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                print('fire')
+                local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+                local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0)
+                game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
+            else
+                print("Target player not valid.")
+            end
+        end
+
+        addcmd('firerocket', {}, function(args, speaker)
+            local players = getPlayer(args[1], speaker)
+            for _, v in pairs(players) do
+                spawnRocket(Players[v])
+            end
+        end)
+    else
+        -- Если нужно что-то сделать при отключении, добавьте логику здесь
     end
 end)
 
-local Players = game:GetService("Players")
-
--- Функция для выполнения атаки Tactical Airstrike
-local function performAirstrike()
-    local player = Players.LocalPlayer -- Получаем локального игрока
-    local character = player.Character
-    if character then
-        local args = {
-            [1] = Vector3.new(0, 50, 0) -- Замените на желаемые координаты
-        }
-        
-        local tacticalAirstrike = character:FindFirstChild("Tactical Airstrike")
-        if tacticalAirstrike and tacticalAirstrike:IsA("Tool") then
-            tacticalAirstrike.OnMouseClick:FireServer(unpack(args)) -- Активируем ивент
-            print("Tactical Airstrike activated!") -- Для отладки
-        else
-            print("Tactical Airstrike tool not found in character.")
-        end
-    else
-        print("Character not found.")
-    end
-end
-
--- Обработка команд
+-- Обработка команды chat для открытия/закрытия меню
 game.Players.LocalPlayer.Chatted:Connect(function(message)
-    if message:lower() == "blind" then -- Проверяем, если команда "blind"
-        performAirstrike() -- Вызываем функцию для атаки
+    if message:lower() == "menu2" then
+        toggleMenu() -- Переключаем состояние меню
     end
 end)
 
