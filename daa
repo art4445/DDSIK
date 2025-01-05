@@ -12408,49 +12408,6 @@ addcmd("giveblocks", {}, function(args, speaker)
 end)
 
 
-addcmd('copytoolname', {'ctn'}, function(args, speaker)
-    local character = speaker.Character or speaker.CharacterAdded:Wait()
-    if not character then
-        notify("Character not found.")
-        return
-    end
-
-    local tools = character:GetChildren() 
-    for _, tool in ipairs(tools) do
-        if tool:IsA("Tool") then 
-            local toolName = tool.Name 
-            toClipboard(toolName) 
-            notify("Tool name copied to clipboard: " .. toolName) 
-            return 
-        end
-    end
-
-    notify("No tools found in your character.") 
-end)
-
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--- Command to give a specific weapon
-addcmd("giveweapon", {"gw"}, function(args, speaker)
-    if #args < 1 then
-        return notify("Error", "Please specify a weapon name.") -- Notify if no weapon name is provided
-    end
-
-    local weaponName = args[1] -- Get the weapon name from the command argument
-
-    -- Attempt to give the specified weapon
-    local success = ReplicatedStorage:FindFirstChild(weaponName)
-    if success then
-        for i = 1, 1 do -- Change the number if you want to give multiple copies
-            ReplicatedStorage[weaponName]:FireServer() -- Assuming you have a remote called FireServer on the weapon
-        end
-        notify("Success", "You have received " .. weaponName .. ".") -- Notify if weapon is given successfully
-    else
-        notify("Error", "Weapon " .. weaponName .. " does not exist.") -- Notify if the weapon does not exist
-    end
-end)
-
 
 function spawnRocket(targetPlayer)
     print('fire')
