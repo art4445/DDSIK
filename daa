@@ -12407,7 +12407,25 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+addcmd('copytoolname', {'ctn'}, function(args, speaker)
+    local character = speaker.Character or speaker.CharacterAdded:Wait()
+    if not character then
+        notify("Character not found.")
+        return
+    end
 
+    local tools = character:GetChildren() 
+    for _, tool in ipairs(tools) do
+        if tool:IsA("Tool") then 
+            local toolName = tool.Name 
+            toClipboard(toolName) 
+            notify("Tool name copied to clipboard: " .. toolName) 
+            return 
+        end
+    end
+
+    notify("No tools found in your character.") 
+end)
 
 function spawnRocket(targetPlayer)
     print('fire')
