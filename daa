@@ -12427,8 +12427,9 @@ addcmd('copytoolname', {'ctn'}, function(args, speaker)
     notify("No tools found in your character.") 
 end)
 
+
+
 function spawnRocket(targetPlayer)
-    print('fire')
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position -- Позиция немного выше, чтобы ракета не застряла в земле
         local rocketSpawnPosition = targetPosition + Vector3.new(0, 5, 0) -- Позиция спавна ракеты
     game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(targetPosition, rocketSpawnPosition)
@@ -12440,6 +12441,8 @@ addcmd('firerocket', {}, function(args, speaker)
         spawnRocket(Players[v])
     end
 end)
+
+
 
 
 addcmd('dupe',{},function(args, speaker)
@@ -12468,13 +12471,72 @@ end)
 
 
 
+addcmd("delwalls", {"dw"}, function(args, speaker)
+local W = game.Workspace
+    W.Spawn1.Walls:Destroy()
+    W.Spawn2.Walls:Destroy()
+    W.Spawn3.Walls:Destroy()
+    W.Spawn4.Walls:Destroy()
+    W.Spawn5.Walls:Destroy()
+    W.Spawn6.Walls:Destroy()
+    W.Spawn7.Walls:Destroy()
+    W.Spawn8.Walls:Destroy()
+end)
+
+
+
+addcmd('antivoid2', {'av2'}, function(args, speaker)
+game.Workspace.FallenPartsDestroyHeight = -50000
+end)
+
+
+
+addcmd('parentset', {'ps2'}, function(args, speaker)
+    local sword = speaker.Backpack:FindFirstChild("EnergySword")
+    if sword then
+        sword.Parent = speaker.Character
+        notify('АХ~~~~', 'ДДсик гей')
+    else
+        notify('АХ~~~~', 'ыыыаааыыыыы')
+    end
+end)
+
+
+
+addcmd('parentset', {'ps'}, function(args, speaker)
+    local sword = speaker.Backpack:FindFirstChild("OverseerwrathSword")
+    if sword then
+        sword.Parent = speaker.Character
+        notify('🤨🤨🤨🤨🤨', '🥵🥵🥵🥵🥵🥵🥵')
+    else
+        notify('🤨🤨🤨🤨', '😭😭😰😰😰')
+    end
+end)
+
+
+
+addcmd('antivoid3', {'av3'}, function(args, speaker)
+local tp = game.Workspace.tp.SpawnWalls
+tp:Destroy()
+if tp then
+    notify ("Шкебеде доп доп","Найдено")
+else
+    notify ("Шкебеде доп доп","Не найдено")
+    end
+end)
 
 
 
 
-
-
-
+addcmd('antivoid4', {'av4'}, function(args, speaker)
+local Model = game.Workspace.Model.SpawnWalls.TouchInterest
+Model:Destroy()
+if Model then
+    notify ("Ломание телепортов", "Сломанно")
+else
+    notify ("Ломание телепортов", "Не сломанно/Не найденно")
+    end
+end)
 
 
 
