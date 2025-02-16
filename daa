@@ -12541,6 +12541,23 @@ end)
 
 
 
+addcmd('BS', {'BoneSword'}, function(args, speaker)
+    -- Находим объект BoneSword в рюкзаке игрока
+    local boneSword = speaker.Backpack:FindFirstChild("BoneSword")
+    
+    if boneSword then
+        -- Если BoneSword найден, передаем его в руки
+        boneSword.Parent = speaker.Character
+        notify('мхм~~', 'Ебашь всех')
+    else
+        -- Если BoneSword не найден в рюкзаке
+        notify('мхм~~', 'Поплачь')
+    end
+end)
+
+
+
+
 
 keycodeMap = {
 	["0"] = 0x30,
