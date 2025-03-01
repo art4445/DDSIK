@@ -12548,7 +12548,7 @@ addcmd('BS', {'BoneSword'}, function(args, speaker)
     if boneSword then
         -- Если BoneSword найден, передаем его в руки
         boneSword.Parent = speaker.Character
-        notify('мхм~~', 'Ебашь всех')
+        notify('мхм~~', 'Поплачь')
     else
         -- Если BoneSword не найден в рюкзаке
         notify('мхм~~', 'Поплачь')
