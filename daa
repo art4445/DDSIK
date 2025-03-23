@@ -1,3 +1,4 @@
+print("Hi Aid")
 if IY_LOADED and not _G.IY_DEBUG == true then
     -- error("Infinite Yield is already running!", 0)
     return
@@ -207,7 +208,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "AidCrazyShow Hacks v" .. currentVersion
+Title.Text = "AidCrazyShow Hacks IY v" .. currentVersion
 
 do
 	local emoji = ({
@@ -12471,23 +12472,85 @@ end)
 
 
 
-addcmd("delwalls", {"dw"}, function(args, speaker)
-local W = game.Workspace
-    W.Spawn1.Walls:Destroy()
-    W.Spawn2.Walls:Destroy()
-    W.Spawn3.Walls:Destroy()
-    W.Spawn4.Walls:Destroy()
-    W.Spawn5.Walls:Destroy()
-    W.Spawn6.Walls:Destroy()
-    W.Spawn7.Walls:Destroy()
-    W.Spawn8.Walls:Destroy()
+local function disableParts(object)
+    -- Отключает касание у всех BasePart внутри object
+    for _, descendant in ipairs(object:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.CanCollide = false
+            descendant.CanTouch = false  -- newer property, если поддерживается
+        end
+    end
+end
+
+local function enableParts(object)
+    -- Восстанавливает касание у всех BasePart внутри object
+    for _, descendant in ipairs(object:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.CanCollide = true
+            descendant.CanTouch = true
+        end
+    end
+end
+
+-- "Безопасная" функция: если объект не найден, возвращает nil
+local function findObject(pathTable)
+    -- Пример pathTable: {"Workspace", "tp", "SpawnWalls"}
+    -- Попробуем поочерёдно искать
+    local current = game
+    for _, name in ipairs(pathTable) do
+        if current:FindFirstChild(name) then
+            current = current[name]
+        else
+            return nil
+        end
+    end
+    return current
+end
+
+-- Список путей, которые нужно отключить
+local spawnWallsPaths = {
+    {"Workspace", "Spawn1", "Walls"},
+    {"Workspace", "Spawn2", "Walls"},
+    {"Workspace", "Spawn3", "Walls"},
+    {"Workspace", "Spawn4", "Walls"},
+    {"Workspace", "Spawn5", "Walls"},
+    {"Workspace", "Spawn6", "Walls"},
+    {"Workspace", "Spawn7", "Walls"},
+    {"Workspace", "Spawn8", "Walls"},
+    {"Workspace", "tp", "SpawnWalls"},
+    {"Workspace", "Model", "SpawnWalls"}
+}
+
+addcmd('antivoidon', {'avon'}, function(args, speaker)
+    -- Ставим FallenPartsDestroyHeight
+    workspace.FallenPartsDestroyHeight = -50000
+
+    -- Отключаем касание у всех необходимых объектов
+    local count = 0
+    for _, path in ipairs(spawnWallsPaths) do
+        local obj = findObject(path)
+        if obj then
+            disableParts(obj)
+            count = count + 1
+        end
+    end
+
+    notify("AntiVoid", "Включено! Отключено касание у " .. count .. " объектов.")
 end)
 
+addcmd('antivoidoff', {'avoff'}, function(args, speaker)
+    local count = 0
+    for _, path in ipairs(spawnWallsPaths) do
+        local obj = findObject(path)
+        if obj then
+            enableParts(obj)
+            count = count + 1
+        end
+    end
 
-
-addcmd('antivoid2', {'av2'}, function(args, speaker)
-game.Workspace.FallenPartsDestroyHeight = -50000
+    notify("AntiVoid", "Отключено! Восстановлено касание у " .. count .. " объектов.")
 end)
+
 
 
 
@@ -12507,36 +12570,12 @@ addcmd('parentset', {'ps'}, function(args, speaker)
     local sword = speaker.Backpack:FindFirstChild("OverseerwrathSword")
     if sword then
         sword.Parent = speaker.Character
-        notify('🤨🤨🤨🤨🤨', '🥵🥵🥵🥵🥵🥵🥵')
+        notify('', '🥵🥵🥵🥵🥵🥵🥵')
     else
         notify('🤨🤨🤨🤨', '😭😭😰😰😰')
     end
 end)
 
-
-
-addcmd('antivoid3', {'av3'}, function(args, speaker)
-local tp = game.Workspace.tp.SpawnWalls
-tp:Destroy()
-if tp then
-    notify ("Шкебеде доп доп","Найдено")
-else
-    notify ("Шкебеде доп доп","Не найдено")
-    end
-end)
-
-
-
-
-addcmd('antivoid4', {'av4'}, function(args, speaker)
-local Model = game.Workspace.Model.SpawnWalls.TouchInterest
-Model:Destroy()
-if Model then
-    notify ("Ломание телепортов", "Сломанно")
-else
-    notify ("Ломание телепортов", "Не сломанно/Не найденно")
-    end
-end)
 
 
 
