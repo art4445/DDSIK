@@ -12472,18 +12472,26 @@ end)
 
 
 
+-- Оставляем antivoid2 как есть (не трогаем)
+addcmd('antivoid2', {'av2'}, function(args, speaker)
+    game.Workspace.FallenPartsDestroyHeight = -50000
+end)
+
+-----------------------------------------
+-- Функции для отключения/включения касаний
+-----------------------------------------
 local function disableParts(object)
-    -- Отключает касание у всех BasePart внутри object
+    -- Отключает коллизии/касания у всех BasePart
     for _, descendant in ipairs(object:GetDescendants()) do
         if descendant:IsA("BasePart") then
             descendant.CanCollide = false
-            descendant.CanTouch = false  -- newer property, если поддерживается
+            descendant.CanTouch = false
         end
     end
 end
 
 local function enableParts(object)
-    -- Восстанавливает касание у всех BasePart внутри object
+    -- Включает коллизии/касания у всех BasePart
     for _, descendant in ipairs(object:GetDescendants()) do
         if descendant:IsA("BasePart") then
             descendant.CanCollide = true
@@ -12492,63 +12500,66 @@ local function enableParts(object)
     end
 end
 
--- "Безопасная" функция: если объект не найден, возвращает nil
-local function findObject(pathTable)
-    -- Пример pathTable: {"Workspace", "tp", "SpawnWalls"}
-    -- Попробуем поочерёдно искать
+-----------------------------------------
+-- Путь к объектам, которые раньше Destroy()
+-----------------------------------------
+-- 1) delwalls:  W.Spawn1.Walls .. Spawn8.Walls
+-- 2) antivoid3: game.Workspace.tp.SpawnWalls
+-- 3) antivoid4: game.Workspace.Model.SpawnWalls (и там TouchInterest, но мы просто отключаем всю модель)
+local objectsToDisable = {
+    { "Workspace", "Spawn1", "Walls" },
+    { "Workspace", "Spawn2", "Walls" },
+    { "Workspace", "Spawn3", "Walls" },
+    { "Workspace", "Spawn4", "Walls" },
+    { "Workspace", "Spawn5", "Walls" },
+    { "Workspace", "Spawn6", "Walls" },
+    { "Workspace", "Spawn7", "Walls" },
+    { "Workspace", "Spawn8", "Walls" },
+    { "Workspace", "tp", "SpawnWalls" },
+    { "Workspace", "Model", "SpawnWalls" }
+}
+
+-- Утилита для поиска объекта по пути
+local function findObjectByPath(path)
     local current = game
-    for _, name in ipairs(pathTable) do
-        if current:FindFirstChild(name) then
-            current = current[name]
-        else
+    for _, name in ipairs(path) do
+        local child = current:FindFirstChild(name)
+        if not child then
             return nil
         end
+        current = child
     end
     return current
 end
 
--- Список путей, которые нужно отключить
-local spawnWallsPaths = {
-    {"Workspace", "Spawn1", "Walls"},
-    {"Workspace", "Spawn2", "Walls"},
-    {"Workspace", "Spawn3", "Walls"},
-    {"Workspace", "Spawn4", "Walls"},
-    {"Workspace", "Spawn5", "Walls"},
-    {"Workspace", "Spawn6", "Walls"},
-    {"Workspace", "Spawn7", "Walls"},
-    {"Workspace", "Spawn8", "Walls"},
-    {"Workspace", "tp", "SpawnWalls"},
-    {"Workspace", "Model", "SpawnWalls"}
-}
-
-addcmd('antivoidon', {'avon'}, function(args, speaker)
-    -- Ставим FallenPartsDestroyHeight
-    workspace.FallenPartsDestroyHeight = -50000
-
-    -- Отключаем касание у всех необходимых объектов
+-----------------------------------------
+-- Команда disablevoid (аналог delwalls+antivoid3+antivoid4, но не Destroy)
+-----------------------------------------
+addcmd("disablevoid", {"dv"}, function(args, speaker)
     local count = 0
-    for _, path in ipairs(spawnWallsPaths) do
-        local obj = findObject(path)
+    for _, path in ipairs(objectsToDisable) do
+        local obj = findObjectByPath(path)
         if obj then
             disableParts(obj)
             count = count + 1
         end
     end
-
-    notify("AntiVoid", "Включено! Отключено касание у " .. count .. " объектов.")
+    notify("AntiVoid", "Отключены коллизии/касания у " .. count .. " объектов.")
 end)
 
-addcmd('antivoidoff', {'avoff'}, function(args, speaker)
+-----------------------------------------
+-- Команда enablevoid (восстановление коллизий)
+-----------------------------------------
+addcmd("enablevoid", {"ev"}, function(args, speaker)
     local count = 0
-    for _, path in ipairs(spawnWallsPaths) do
-        local obj = findObject(path)
+    for _, path in ipairs(objectsToDisable) do
+        local obj = findObjectByPath(path)
         if obj then
             enableParts(obj)
             count = count + 1
         end
     end
-
-    notify("AntiVoid", "Отключено! Восстановлено касание у " .. count .. " объектов.")
+    notify("AntiVoid", "Восстановлены коллизии/касания у " .. count .. " объектов.")
 end)
 
 
