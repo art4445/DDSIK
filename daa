@@ -12471,31 +12471,30 @@ end)
 
 
 
-
 local function disableParts(object)
-    -- Отключает коллизии/касания у всех BasePart внутри object
-    for _, descendant in ipairs(object:GetDescendants()) do
-        if descendant:IsA("BasePart") then
-            descendant.CanCollide = false
-            descendant.CanTouch = false
+    -- Отключаем коллизии и удаляем TouchInterest
+    for _, d in ipairs(object:GetDescendants()) do
+        if d:IsA("BasePart") then
+            d.CanCollide = false
+            d.CanTouch = false
+        end
+        if d.Name == "TouchInterest" then
+            d:Destroy()
         end
     end
 end
 
 local function enableParts(object)
-    -- Включает коллизии/касания у всех BasePart внутри object
-    for _, descendant in ipairs(object:GetDescendants()) do
-        if descendant:IsA("BasePart") then
-            descendant.CanCollide = true
-            descendant.CanTouch = true
+    -- Включаем коллизии (TouchInterest не восстанавливаем)
+    for _, d in ipairs(object:GetDescendants()) do
+        if d:IsA("BasePart") then
+            d.CanCollide = true
+            d.CanTouch = true
         end
     end
 end
 
-
--- Поиск объекта по пути
 local function findObjectByPath(path)
-    -- Пример path = {"Workspace", "Spawn1", "Walls"}
     local current = game
     for _, name in ipairs(path) do
         local child = current:FindFirstChild(name)
@@ -12507,50 +12506,43 @@ local function findObjectByPath(path)
     return current
 end
 
-
 local objectsToDisable = {
-    { "Workspace", "Spawn1", "Walls" },
-    { "Workspace", "Spawn2", "Walls" },
-    { "Workspace", "Spawn3", "Walls" },
-    { "Workspace", "Spawn4", "Walls" },
-    { "Workspace", "Spawn5", "Walls" },
-    { "Workspace", "Spawn6", "Walls" },
-    { "Workspace", "Spawn7", "Walls" },
-    { "Workspace", "Spawn8", "Walls" },
-    { "Workspace", "tp", "SpawnWalls" },
-    { "Workspace", "Model", "SpawnWalls" },
+    {"Workspace","Spawn1","Walls"},
+    {"Workspace","Spawn2","Walls"},
+    {"Workspace","Spawn3","Walls"},
+    {"Workspace","Spawn4","Walls"},
+    {"Workspace","Spawn5","Walls"},
+    {"Workspace","Spawn6","Walls"},
+    {"Workspace","Spawn7","Walls"},
+    {"Workspace","Spawn8","Walls"},
+    {"Workspace","tp","SpawnWalls"},
+    {"Workspace","Model","SpawnWalls"}
 }
 
 addcmd("antivoidon", {"avon"}, function(args, speaker)
-    -- Ставим высоту один раз (не откатываем обратно)
     workspace.FallenPartsDestroyHeight = -50000
-
     local count = 0
     for _, path in ipairs(objectsToDisable) do
         local obj = findObjectByPath(path)
         if obj then
             disableParts(obj)
-            count = count + 1
+            count += 1
         end
     end
-
-    notify("AntiVoid", "Отключены коллизии/касания у " .. count .. " объектов. Высота = -50000")
+    notify("AntiVoid","Отключены коллизии у "..count.." объектов. Высота=-50000")
 end)
 
--- Команда antivoidoff (включает касания обратно)
 addcmd("antivoidoff", {"avoff"}, function(args, speaker)
     local count = 0
     for _, path in ipairs(objectsToDisable) do
         local obj = findObjectByPath(path)
         if obj then
             enableParts(obj)
-            count = count + 1
+            count += 1
         end
     end
-
-    notify("AntiVoid", "Восстановлены коллизии/касания у " .. count .. " объектов. Высота осталась -50000")
+    notify("AntiVoid","Восстановлены коллизии у "..count.." объектов. Высота остаётся -50000")
 end)
-
 
 
 
