@@ -12472,16 +12472,8 @@ end)
 
 
 
--- Оставляем antivoid2 как есть (не трогаем)
-addcmd('antivoid2', {'av2'}, function(args, speaker)
-    game.Workspace.FallenPartsDestroyHeight = -50000
-end)
-
------------------------------------------
--- Функции для отключения/включения касаний
------------------------------------------
 local function disableParts(object)
-    -- Отключает коллизии/касания у всех BasePart
+    -- Отключает коллизии/касания у всех BasePart внутри object
     for _, descendant in ipairs(object:GetDescendants()) do
         if descendant:IsA("BasePart") then
             descendant.CanCollide = false
@@ -12491,7 +12483,7 @@ local function disableParts(object)
 end
 
 local function enableParts(object)
-    -- Включает коллизии/касания у всех BasePart
+    -- Включает коллизии/касания у всех BasePart внутри object
     for _, descendant in ipairs(object:GetDescendants()) do
         if descendant:IsA("BasePart") then
             descendant.CanCollide = true
@@ -12500,27 +12492,10 @@ local function enableParts(object)
     end
 end
 
------------------------------------------
--- Путь к объектам, которые раньше Destroy()
------------------------------------------
--- 1) delwalls:  W.Spawn1.Walls .. Spawn8.Walls
--- 2) antivoid3: game.Workspace.tp.SpawnWalls
--- 3) antivoid4: game.Workspace.Model.SpawnWalls (и там TouchInterest, но мы просто отключаем всю модель)
-local objectsToDisable = {
-    { "Workspace", "Spawn1", "Walls" },
-    { "Workspace", "Spawn2", "Walls" },
-    { "Workspace", "Spawn3", "Walls" },
-    { "Workspace", "Spawn4", "Walls" },
-    { "Workspace", "Spawn5", "Walls" },
-    { "Workspace", "Spawn6", "Walls" },
-    { "Workspace", "Spawn7", "Walls" },
-    { "Workspace", "Spawn8", "Walls" },
-    { "Workspace", "tp", "SpawnWalls" },
-    { "Workspace", "Model", "SpawnWalls" }
-}
 
--- Утилита для поиска объекта по пути
+-- Поиск объекта по пути
 local function findObjectByPath(path)
+    -- Пример path = {"Workspace", "Spawn1", "Walls"}
     local current = game
     for _, name in ipairs(path) do
         local child = current:FindFirstChild(name)
@@ -12532,10 +12507,24 @@ local function findObjectByPath(path)
     return current
 end
 
------------------------------------------
--- Команда disablevoid (аналог delwalls+antivoid3+antivoid4, но не Destroy)
------------------------------------------
-addcmd("disablevoid", {"dv"}, function(args, speaker)
+
+local objectsToDisable = {
+    { "Workspace", "Spawn1", "Walls" },
+    { "Workspace", "Spawn2", "Walls" },
+    { "Workspace", "Spawn3", "Walls" },
+    { "Workspace", "Spawn4", "Walls" },
+    { "Workspace", "Spawn5", "Walls" },
+    { "Workspace", "Spawn6", "Walls" },
+    { "Workspace", "Spawn7", "Walls" },
+    { "Workspace", "Spawn8", "Walls" },
+    { "Workspace", "tp", "SpawnWalls" },
+    { "Workspace", "Model", "SpawnWalls" },
+}
+
+addcmd("antivoidon", {"avon"}, function(args, speaker)
+    -- Ставим высоту один раз (не откатываем обратно)
+    workspace.FallenPartsDestroyHeight = -50000
+
     local count = 0
     for _, path in ipairs(objectsToDisable) do
         local obj = findObjectByPath(path)
@@ -12544,13 +12533,12 @@ addcmd("disablevoid", {"dv"}, function(args, speaker)
             count = count + 1
         end
     end
-    notify("AntiVoid", "Отключены коллизии/касания у " .. count .. " объектов.")
+
+    notify("AntiVoid", "Отключены коллизии/касания у " .. count .. " объектов. Высота = -50000")
 end)
 
------------------------------------------
--- Команда enablevoid (восстановление коллизий)
------------------------------------------
-addcmd("enablevoid", {"ev"}, function(args, speaker)
+-- Команда antivoidoff (включает касания обратно)
+addcmd("antivoidoff", {"avoff"}, function(args, speaker)
     local count = 0
     for _, path in ipairs(objectsToDisable) do
         local obj = findObjectByPath(path)
@@ -12559,7 +12547,8 @@ addcmd("enablevoid", {"ev"}, function(args, speaker)
             count = count + 1
         end
     end
-    notify("AntiVoid", "Восстановлены коллизии/касания у " .. count .. " объектов.")
+
+    notify("AntiVoid", "Восстановлены коллизии/касания у " .. count .. " объектов. Высота осталась -50000")
 end)
 
 
