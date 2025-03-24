@@ -1,4 +1,5 @@
 print("Hi Aid")
+print("Original Version - 6.1")
 if IY_LOADED and not _G.IY_DEBUG == true then
     -- error("Infinite Yield is already running!", 0)
     return
@@ -18,7 +19,7 @@ if not game:IsLoaded() then
     notLoaded:Destroy()
 end
 
-currentVersion = "6.1"
+currentVersion = "5454"
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -4294,6 +4295,17 @@ function autoComplete(str,curText)
 end
 
 CMDs = {}
+CMDs[#CMDs + 1] = {NAME = '--Мои команды--', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'firerocket [nickname]', DESC = 'Спавнит ракеты игроке'}
+CMDs[#CMDs + 1] = {NAME = 'dupe [num]', DESC = 'Нужен заполненный инвентарь'}
+CMDs[#CMDs + 1] = {NAME = 'antivoidon / avon', DESC = 'Отключает касания от невидимых парты'}
+CMDs[#CMDs + 1] = {NAME = 'antivoidoff / avoff', DESC = 'Включает касания обратно'}
+CMDs[#CMDs + 1] = {NAME = 'giveblocks', DESC = 'Выдает блоки'}
+CMDs[#CMDs + 1] = {NAME = 'copytoolname / ctn', DESC = 'Копирует название предмета в руках'}
+CMDs[#CMDs + 1] = {NAME = 'parentset2 / ps2', DESC = 'Одевает отбиралку в руки'}
+CMDs[#CMDs + 1] = {NAME = 'parentset / ps', DESC = 'Одевает меч для 0 хп в руки'}
+CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост меч в руки'}
+CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
@@ -12546,7 +12558,7 @@ end)
 
 
 
-addcmd('parentset', {'ps2'}, function(args, speaker)
+addcmd('parentset2', {'ps2'}, function(args, speaker)
     local sword = speaker.Backpack:FindFirstChild("EnergySword")
     if sword then
         sword.Parent = speaker.Character
