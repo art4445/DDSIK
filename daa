@@ -12458,27 +12458,75 @@ end)
 
 
 
-addcmd('dupe',{},function(args, speaker)
+
+
+addcmd('permhold',{},function(args, speaker)
 	    local stool
 	    local LOOP_NUM = tonumber(args[1]) or 1
 	
-	    
+	    -- Найти выбранный инструмент в инвентаре игрока
 	    for i, v in pairs(speaker.Character:GetDescendants()) do
 	        if v:IsA('Tool') or v:IsA('HopperBin') then
 	            stool = v.Name:lower()
 	        end
 	    end
 	
-	    
+	    -- Дублирование инструмента LOOP_NUM раз
 	    for i = 1, LOOP_NUM do
 	        for i, v in pairs(speaker:FindFirstChildOfClass("Backpack"):GetChildren()) do
 	            if v.Name:lower() == stool then
 	                v.Parent = speaker.Character
-	                wait()
+	                --wait()
 	            end
 	        end
 	        wait(0.5)
 	    end
+end)
+
+
+
+
+
+
+addcmd("spawnhp", {"spawnhp"}, function(args, speaker)
+	game:GetService("Players").LocalPlayer.Backpack.OverseerwrathSword.Parent = speaker.Character
+	for i=1, 11 do
+		task.wait(0.25)
+		execCmd('permhold 1')
+	end
+	wait(0.1)
+	hum = speaker.Character:FindFirstChild("Humanoid")
+	hum:UnequipTools()
+	wait()
+	game:GetService("Players").LocalPlayer.Backpack.OverseerwrathSword.Parent = speaker.Character
+	wait()
+	execCmd('permhold 1')
+	hum:UnequipTools()
+	local hp0 = Instance.new('IntValue')
+	hp0.Parent = speaker.Character
+	hp0.Name = 'hp0'
+	--wait(0.4)
+	
+	--wait(0.3)
+	--speaker.Character.Carrot:Activate()
+
+	local player = game:GetService("Players").LocalPlayer
+    	local backpack = player.Backpack
+    	local humanoid = player.Character:FindFirstChildOfClass('Humanoid')
+
+	if not tigerskin or not tigerskin.Parent then
+		wait(0.2)
+		tigerskin = backpack:FindFirstChild("TigerSkin")	
+		tigerskin.Parent = player.Character
+		wait()
+		tigerskin:Activate()
+		wait()
+    		humanoid:UnequipTools()
+	end
+
+	execCmd('et Carrot')
+	--wait(1.1)
+	--execCmd('giveblocks')
 end)
 
 
