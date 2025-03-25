@@ -4297,15 +4297,16 @@ end
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = '--Мои команды--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'firerocket [nickname]', DESC = 'Спавнит ракеты игроке'}
-CMDs[#CMDs + 1] = {NAME = 'dupe [num]', DESC = 'Нужен заполненный инвентарь'}
+CMDs[#CMDs + 1] = {NAME = 'permhold [num]', DESC = 'Нужен заполненный инвентарь'}
 CMDs[#CMDs + 1] = {NAME = 'antivoidon / avon', DESC = 'Отключает касания от невидимых парты'}
 CMDs[#CMDs + 1] = {NAME = 'antivoidoff / avoff', DESC = 'Включает касания обратно'}
 CMDs[#CMDs + 1] = {NAME = 'giveblocks', DESC = 'Выдает блоки'}
 CMDs[#CMDs + 1] = {NAME = 'copytoolname / ctn', DESC = 'Копирует название предмета в руках'}
-CMDs[#CMDs + 1] = {NAME = 'parentset2 / ps2', DESC = 'Одевает отбиралку в руки'}
-CMDs[#CMDs + 1] = {NAME = 'parentset / ps', DESC = 'Одевает меч для 0 хп в руки'}
+CMDs[#CMDs + 1] = {NAME = 'spawnhp', DESC = 'Делает автоматически инф хп'}
+CMDs[#CMDs + 1] = {NAME = 'clsetup', DESC = 'Делает клона'}
 CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост меч в руки'}
 CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Loads Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads old Roblox console'}
@@ -12456,6 +12457,79 @@ addcmd('firerocket', {}, function(args, speaker)
 end)
 
 
+addcmd("clsetup", {"clset"}, function(args, speaker)
+
+	--keypress(0x36)
+	--wait(0.05)
+	--keyrelease(0x36)
+	--task.wait(1.5)
+	--execCmd('dst')
+	--task.wait(0.1)
+	--game:GetService("Players").LocalPlayer.Backpack.SpectralSword.Parent = speaker.Character
+	--task.wait(0.5)
+
+	--keypress(0x35)
+	--wait(0.05)
+	--keyrelease(0x35)
+	--task.wait(1.5)
+	--execCmd('dst')
+	--task.wait(0.1)
+	--game:GetService("Players").LocalPlayer.Backpack.EnergySword.Parent = speaker.Character
+
+	--hum = speaker.Character:FindFirstChild("Humanoid")
+	--hum:UnequipTools()
+
+	game:GetService("Players").LocalPlayer.Backpack.EnergySword.Parent = speaker.Character
+	task.wait(0.1)
+
+	game:GetService("Players").LocalPlayer.Backpack.SpectralSword.Parent = speaker.Character
+	task.wait(0.1)
+
+	local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+	task.wait(0.3)
+	-- Ищем все инструменты (Tools), которые находятся у персонажа
+	local tools = {}
+	for _, child in ipairs(character:GetChildren()) do
+	    if child:IsA("Tool") then
+	        table.insert(tools, child)
+	    end
+	end
+	
+	-- Параметры события
+	local args = {
+	    [1] = "r", -- Клавиша, например "r"
+	    [2] = Vector3.new(-1203.982666015625, 190.5998992919922, 200.66754150390625) -- Позиция
+	}
+	
+	-- Выполняем событие KeyDown для каждого инструмента
+	for i, tool in ipairs(tools) do
+	    -- Проверяем наличие объекта KeyDown в инструменте
+	    local keyDown = tool:FindFirstChild("KeyDown")
+	    if keyDown then
+	        -- Вызываем событие KeyDown
+	        keyDown:FireServer(unpack(args))
+			--tool.Parent = game.Players.LocalPlayer.Backpack
+	        print(i .. "-й инструмент использован:", tool.Name)
+	    else
+	        print("KeyDown не найден у инструмента:", tool.Name)
+	    end
+	end
+	wait(1.5)
+	for i, tool in ipairs(tools) do
+	    -- Проверяем наличие объекта KeyDown в инструменте
+	    local keyDown = tool:FindFirstChild("KeyDown")
+	    if keyDown then
+	        -- Вызываем событие KeyDown
+	        --keyDown:FireServer(unpack(args))
+		tool:Destroy()
+	        print(i .. "-й инструмент использован:", tool.Name)
+	    else
+	        print("KeyDown не найден у инструмента:", tool.Name)
+	    end
+	end
+	
+	
+end)
 
 
 
@@ -12928,6 +13002,7 @@ local NEWeventBinds = {
         {COMMAND = "giveblocks", DELAY = 0},
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antiafk", DELAY = 2},
+	{COMMAND = "antivoidon", DELAY = 5}
     },
     ["OnKilled"] = {},
     ["OnJoin"] = {
