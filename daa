@@ -4305,6 +4305,8 @@ CMDs[#CMDs + 1] = {NAME = 'copytoolname / ctn', DESC = 'Копирует наз�
 CMDs[#CMDs + 1] = {NAME = 'spawnhp', DESC = 'Делает автоматически инф хп'}
 CMDs[#CMDs + 1] = {NAME = 'clsetup', DESC = 'Делает клона'}
 CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост меч в руки'}
+CMDs[#CMDs + 1] = {NAME = 'dropclone / drc', DESC = 'Имитирует касания к EnergySword'}
+CMDs[#CMDs + 1] = {NAME = 'stopdropclone / stopdrc', DESC = 'Отключает имитирумые касания к EnergySword'}
 CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
@@ -12455,6 +12457,95 @@ addcmd('firerocket', {}, function(args, speaker)
         spawnRocket(Players[v])
     end
 end)
+
+
+
+
+
+
+
+
+
+
+-- Флаг для отслеживания состояния команды
+local isDropCloneActive = false
+local hkillstop = false
+
+-- Функция для запуска команды
+addcmd('dropclone', {'drc'}, function(args, speaker)
+    local RS = game:GetService("RunService").RenderStepped
+    isDropCloneActive = true  -- Активируем команду
+    hkillstop = false  -- Сбрасываем флаг остановки, чтобы можно было снова запустить
+
+    -- Поиск клона, у которого есть EnergySword
+    local clone = nil
+    for _, obj in pairs(workspace:GetChildren()) do
+        if obj:IsA("Model") and obj:FindFirstChild("EnergySword") then
+            local tool = obj:FindFirstChild("EnergySword")
+            local handle = tool:FindFirstChild("Handle")
+            if handle then
+                clone = obj
+                break
+            end
+        end
+    end
+
+    if not clone then
+        isDropCloneActive = false  -- Деактивируем команду, если клона нет
+        return notify("Handle Kill", "Клон с EnergySword не найден в рабочем пространстве.")
+    end
+    
+    -- Проверка наличия EnergySword и Handle у клона
+    local Tool = clone:FindFirstChild("EnergySword")
+    local Handle = Tool and Tool:FindFirstChild("Handle")
+    
+    if not Tool or not Handle then
+        isDropCloneActive = false  -- Деактивируем команду, если у клона нет нужных объектов
+        return notify("Handle Kill", "Необходимо, чтобы клон держал \"EnergySword\" с ручкой для касания.")
+    end
+    
+    task.spawn(function()
+        while Tool and clone and speaker and speaker.Character and Tool.Parent == clone and isDropCloneActive do
+            local Human = clone:FindFirstChildWhichIsA("Humanoid")
+            if not Human or hkillstop then
+                break
+            end
+
+            if Human.Health <= 0 then
+                clone:Destroy()
+                break
+            end
+
+            local v1 = speaker.Character:FindFirstChild("Torso")
+            if v1 and v1:IsA("BasePart") then
+                newtouch(v1, Handle, 1, false)
+                --firetouchinterest(Handle, v1, 1)
+                wait()
+                --firetouchinterest(Handle, v1, 0)
+            end
+        end
+
+        -- Убедимся, что speaker существует перед доступом к его имени
+        if speaker and speaker.Name then
+            notify("Handle Kill Stopped!", speaker.Name .. " умер/вышел или вы убрали инструмент!")
+        else
+            notify("Handle Kill Stopped!", "Неизвестный игрок завершил команду.")
+        end
+
+        isDropCloneActive = false  -- Деактивируем команду по завершении
+    end)
+end)
+
+-- Команда для остановки
+addcmd('stopdropclone', {'stopdrc'}, function(args, speaker)
+    isDropCloneActive = false  -- Останавливаем команду
+    hkillstop = true
+    notify("Handle Kill", "Команда 'dropclone' была остановлена.")
+end)
+
+
+
+
 
 
 addcmd("clsetup", {"clset"}, function(args, speaker)
