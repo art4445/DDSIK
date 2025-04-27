@@ -12462,6 +12462,8 @@ end)
 
 
 local unwantedNames = {"DecimateScript", "SelectionBox", "PointLight"}
+
+
 addcmd('defend', {'def'}, function(args, speaker)
     while true do
             local character = speaker.Character
@@ -12470,7 +12472,6 @@ addcmd('defend', {'def'}, function(args, speaker)
                     if table.find(unwantedNames, child.Name) then
                         child:Destroy()
             character:FindFirstChildOfClass('Humanoid').WalkSpeed = 25
-            print('deleted')
                     end
                 end
             end
@@ -13109,7 +13110,7 @@ local NEWeventBinds = {
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antiafk", DELAY = 2},
 	{COMMAND = "antivoidon", DELAY = 5}
-	{COMMAND = "def", DELAY = 5}
+	{COMMAND = "defend", DELAY = 1}
     },
     ["OnKilled"] = {},
     ["OnJoin"] = {
