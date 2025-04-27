@@ -12461,7 +12461,22 @@ end)
 
 
 
-
+local unwantedNames = {"DecimateScript", "SelectionBox", "PointLight"}
+addcmd('defend', {'def'}, function(args, speaker)
+    while true do
+            local character = speaker.Character
+            if character then
+                for _, child in ipairs(character:GetDescendants()) do
+                    if table.find(unwantedNames, child.Name) then
+                        child:Destroy()
+            character:FindFirstChildOfClass('Humanoid').WalkSpeed = 25
+            print('deleted')
+                    end
+                end
+            end
+        wait(0.1)
+    end
+end)
 
 
 
@@ -13094,6 +13109,7 @@ local NEWeventBinds = {
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antiafk", DELAY = 2},
 	{COMMAND = "antivoidon", DELAY = 5}
+	{COMMAND = "def", DELAY = 5}
     },
     ["OnKilled"] = {},
     ["OnJoin"] = {
