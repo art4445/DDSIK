@@ -13092,7 +13092,6 @@ local NEWeventBinds = {
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antiafk", DELAY = 2},
 	{COMMAND = "antivoidon", DELAY = 5}
-	{COMMAND = "dex", DELAY = 2},
     },
     ["OnKilled"] = {},
     ["OnJoin"] = {
