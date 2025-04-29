@@ -13090,7 +13090,7 @@ local NEWeventBinds = {
     ["OnExecute"] = {
         {COMMAND = "giveblocks", DELAY = 0},
 	{COMMAND = "spawnhp", DELAY = 5},
-	{COMMAND = "antivoidon", DELAY = 5}
+	{COMMAND = "antivoidon", DELAY = 5},
 	{COMMAND = "dex", DELAY = 10}
     },
     ["OnKilled"] = {},
