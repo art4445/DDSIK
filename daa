@@ -11719,32 +11719,76 @@ addcmd('kill',{'fekill'},function(args, speaker)
 	end
 end)
 
+
+hkillstop=true
 addcmd('handlekill', {'hkill'}, function(args, speaker)
-	if not firetouchinterest then
-		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
-	end
-	local RS = RunService.RenderStepped
-	local Tool = speaker.Character.FindFirstChildWhichIsA(speaker.Character, "Tool")
-	local Handle = Tool and Tool.FindFirstChild(Tool, "Handle")
-	if not Tool or not Handle then
-		return notify("Handle Kill", "You need to hold a \"Tool\" that does damage on touch. For example the default \"Sword\" tool.")
-	end
-	for _, v in ipairs(getPlayer(args[1], speaker)) do
-		v = Players[v]
-		task.spawn(function()
-			while Tool and speaker.Character and v.Character and Tool.Parent == speaker.Character do
-				local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
-				if not Human or Human.Health <= 0 then
-					break
-				end
-				for _, v1 in ipairs(v.Character.GetChildren(v.Character)) do
-					v1 = ((v1.IsA(v1, "BasePart") and firetouchinterest(Handle, v1, 1, (RS.Wait(RS) and nil) or firetouchinterest(Handle, v1, 0)) and nil) or v1) or v1
-				end
-			end
-			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
-		end)
-	end
+    if not firetouchinterest then
+        return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
+    end
+    hkillstop=false
+    local dist = 1000
+    local RS = RunService.RenderStepped
+    local Tool = speaker.Character.FindFirstChildWhichIsA(speaker.Character, "Tool")
+    local Handle = Tool and Tool.FindFirstChild(Tool, "Handle")
+    if not Tool or not Handle then
+        return notify("Handle Kill", "You need to hold a \"Tool\" that does damage on touch. For example the default \"Sword\" tool.")
+    end
+    for _, v in ipairs(getPlayer(args[1], speaker)) do
+        v = Players[v]
+        --[[
+        v.HealthDisplayDistance = dist
+        v.NameDisplayDistance = dist
+        if v.Character then
+            local humanoid = v.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.HealthDisplayDistance = dist
+                humanoid.NameDisplayDistance = dist
+                humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+            end
+        end]]
+        
+        task.spawn(function()
+            while Tool and speaker.Character --[[and v.Character]] and Tool.Parent == speaker.Character and v do
+                --local Human = v.Character.FindFirstChildWhichIsA(v.Character, "Humanoid")
+                if --[[not Human or Human.Health <= 0 or]] hkillstop then
+                    break
+                end
+                if v.Character and v.Character:FindFirstChild('Torso') then
+                    local v1 = v.Character.Torso 
+                    if Tool.Name == "Bear Arm" then
+                        v1 = v.Character['Left Arm']
+                    end
+
+                    if Handle:FindFirstChild("TouchInterest") then
+                        newtouch(Handle, v1, 3)
+                        --wait()
+                    elseif Tool.Name == "TigerSkin" then
+                        v1 = v.Character['Left Arm']
+                        local myTorso = speaker.Character.Torso
+                        newtouch(myTorso, v1, 3, true, 200)
+                    else 
+                        local touch = Tool:FindFirstChild("TouchInterest", true)
+                        if touch then
+                            local newHandle = touch.Parent
+                            newtouch(newHandle, v1, 3)
+                        else
+                            newtouch(Handle, v1, 3)
+                        end
+                    end
+                else
+                    wait(0.05)
+                end
+            end
+            notify("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
+        end)
+    end
 end)
+
+addcmd('hkillstop',{'hks'},function(args, speaker)
+    hkillstop=true
+end)
+
+
 
 local hb = RunService.Heartbeat
 addcmd('tpwalk', {'teleportwalk'}, function(args, speaker)
@@ -12460,7 +12504,24 @@ end)
 
 
 
+local unwantedNames = {"DecimateScript", "SelectionBox", "PointLight"}
 
+
+addcmd('defend', {'def'}, function(args, speaker)
+    while true do
+            local character = speaker.Character
+            if character then
+                for _, child in ipairs(character:GetDescendants()) do
+                    if table.find(unwantedNames, child.Name) then
+                        child:Destroy()
+            character:FindFirstChildOfClass('Humanoid').WalkSpeed = 25
+            print('deleted')
+                    end
+                end
+            end
+        wait(0.1)
+    end
+end)
 
 
 
@@ -13091,7 +13152,8 @@ local NEWeventBinds = {
         {COMMAND = "giveblocks", DELAY = 0},
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "dex", DELAY = 10},
-	{COMMAND = "antivoidon", DELAY = 5}
+	{COMMAND = "antivoidon", DELAY = 5},
+	{COMMAND = "def", DELAY = 1}
     },
     ["OnKilled"] = {},
     ["OnJoin"] = {
