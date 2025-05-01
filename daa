@@ -4308,6 +4308,7 @@ CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост ме
 CMDs[#CMDs + 1] = {NAME = 'dropclone / drc', DESC = 'Имитирует касания к EnergySword'}
 CMDs[#CMDs + 1] = {NAME = 'stopdropclone / stopdrc', DESC = 'Отключает имитирумые касания к EnergySword'}
 CMDs[#CMDs + 1] = {NAME = 'sethotbar / sethb', DESC = 'Хотбар'}
+CMDs[#CMDs + 1] = {NAME = 'permspectator / perms', DESC = 'Делает пермспектатор'}
 CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
@@ -12532,33 +12533,26 @@ addcmd('sethotbar', {'sethb'}, function(args, speaker)
 
     local hot = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui.Backpack.Hotbar
 
-    --local hot = game:GetService("CoreGui").RobloxGui.Backpack.Hotbar
+    -- Проверка, что все ячейки пусты
+    for i = 0, 9 do
+        local slot = hot:FindFirstChild(tostring(i))
+        if slot and slot.ToolName.Text ~= "" then
+            notify("sethotbar", "Хотбар не пуст. Очистите его перед использованием команды.")
+            return
+        end
+    end
 
+    -- Функция для установки инструмента в слот
     local function AddToSlot(key, tool)
         hum:UnequipTools()
         wait()
-        toolname = hot:FindFirstChild(tostring(key)).ToolName.Text
-
-        if toolname == tool then return end
-
-        local slottool = backp:FindFirstChild(toolname)
-
-        slottool.Parent = char
+        execCmd("et " .. tool)
         wait()
         execCmd("permhold 1")
-    
-        local newslottool = backp:WaitForChild(slottool.Name, 6)
-        --hum:UnequipTools()
-        wait()
-        if newslottool then
-            execCmd("dst")
-            execCmd("et " .. tool)
-            wait()
-            execCmd("permhold 1")
-            local addedtool = backp:WaitForChild(tool, 6)
-            hum:UnequipTools()
-        end
+        hum:UnequipTools()
     end
+
+    -- Установка оружия в хотбар
     AddToSlot(1, "IvoryPeriastron")
     AddToSlot(2, "ChartreusePeriastron")
     AddToSlot(3, "DaggerOfShatteredDimensions")
@@ -12568,7 +12562,54 @@ addcmd('sethotbar', {'sethb'}, function(args, speaker)
     AddToSlot(7, "CrimsonPeriastron")
     AddToSlot(8, "RainbowPeriastron")
     AddToSlot(9, "BlackPantherDagger")
+    AddToSlot(0, "SnowyGravityCoil")
+end)
 
+
+
+addcmd('permspectator', {'perms'}, function(args, speaker)
+    if speaker ~= game:GetService("Players").LocalPlayer then return end
+
+    local folderName = args[1] or "folder"
+    local Players   = game:GetService("Players")
+    local Workspace = game:GetService("Workspace")
+
+    -- найдём или создадим папку
+    local folder = Workspace:FindFirstChild(folderName)
+    if not folder then
+        folder = Instance.new("Folder")
+        folder.Name = folderName
+        folder.Parent = Workspace
+    end
+
+    -- найдём HumanoidRootPart в вашем персонаже
+    local character = speaker.Character or speaker.CharacterAdded:Wait()
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if not (hrp and hrp:IsA("BasePart")) then
+        notify("permspec", "Ошибка: HumanoidRootPart не найден!")
+        return
+    end
+
+    -- клонируем HumanoidRootPart в папку
+    local clone = hrp:Clone()
+    clone.Parent = folder
+    notify("permspec", "HumanoidRootPart склонирован в папку '"..folderName.."'")
+end)
+
+-- команда unpermspec (alias ups) — удаляет папку и возвращает всё как было
+addcmd('unpermspec', {'ups'}, function(args, speaker)
+    if speaker ~= game:GetService("Players").LocalPlayer then return end
+
+    local folderName = args[1] or "folder"
+    local Workspace = game:GetService("Workspace")
+
+    local folder = Workspace:FindFirstChild(folderName)
+    if folder and folder:IsA("Folder") then
+        folder:Destroy()
+        notify("unpermspec", "Папка '"..folderName.."' и все её содержимое удалены")
+    else
+        notify("unpermspec", "Папка '"..folderName.."' не найдена")
+    end
 end)
 
 
