@@ -4309,6 +4309,7 @@ CMDs[#CMDs + 1] = {NAME = 'dropclone / drc', DESC = 'Имитирует каса
 CMDs[#CMDs + 1] = {NAME = 'stopdropclone / stopdrc', DESC = 'Отключает имитирумые касания к EnergySword'}
 CMDs[#CMDs + 1] = {NAME = 'sethotbar / sethb', DESC = 'Хотбар'}
 CMDs[#CMDs + 1] = {NAME = 'permspectator / perms', DESC = 'Делает пермспектатор'}
+CMDs[#CMDs + 1] = {NAME = 'unpermspectator / umperms', DESC = 'Останавливает пермспектатор'}
 CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
@@ -12596,8 +12597,8 @@ addcmd('permspectator', {'perms'}, function(args, speaker)
     notify("permspec", "HumanoidRootPart склонирован в папку '"..folderName.."'")
 end)
 
--- команда unpermspec (alias ups) — удаляет папку и возвращает всё как было
-addcmd('unpermspec', {'ups'}, function(args, speaker)
+
+addcmd('unpermspectator', {'unperms'}, function(args, speaker)
     if speaker ~= game:GetService("Players").LocalPlayer then return end
 
     local folderName = args[1] or "folder"
