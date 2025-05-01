@@ -4307,6 +4307,7 @@ CMDs[#CMDs + 1] = {NAME = 'clsetup', DESC = 'Делает клона'}
 CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост меч в руки'}
 CMDs[#CMDs + 1] = {NAME = 'dropclone / drc', DESC = 'Имитирует касания к EnergySword'}
 CMDs[#CMDs + 1] = {NAME = 'stopdropclone / stopdrc', DESC = 'Отключает имитирумые касания к EnergySword'}
+CMDs[#CMDs + 1] = {NAME = 'sethotbar / sethb', DESC = 'Хотбар'}
 CMDs[#CMDs + 1] = {NAME = '--Конец--', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield support server.'}
@@ -12523,6 +12524,53 @@ addcmd('defend', {'def'}, function(args, speaker)
     end
 end)
 
+
+addcmd('sethotbar', {'sethb'}, function(args, speaker)
+    local hum = speaker.Character.Humanoid
+    local char = speaker.Character
+    local backp = speaker.Backpack
+
+    local hot = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui.Backpack.Hotbar
+
+    --local hot = game:GetService("CoreGui").RobloxGui.Backpack.Hotbar
+
+    local function AddToSlot(key, tool)
+        hum:UnequipTools()
+        wait()
+        toolname = hot:FindFirstChild(tostring(key)).ToolName.Text
+
+        if toolname == tool then return end
+
+        local slottool = backp:FindFirstChild(toolname)
+
+        slottool.Parent = char
+        wait()
+        execCmd("permhold 1")
+    
+        local newslottool = backp:WaitForChild(slottool.Name, 6)
+        --hum:UnequipTools()
+        wait()
+        if newslottool then
+            execCmd("dst")
+            execCmd("et " .. tool)
+            wait()
+            execCmd("permhold 1")
+            local addedtool = backp:WaitForChild(tool, 6)
+            hum:UnequipTools()
+        end
+    end
+    AddToSlot(1, "IvoryPeriastron")
+    AddToSlot(2, "ChartreusePeriastron")
+    AddToSlot(3, "DaggerOfShatteredDimensions")
+    AddToSlot(4, "TelamonsterTheChaosEdge")
+    AddToSlot(5, "WintersGreatSword")
+    AddToSlot(6, "GiantAnimeMallet")
+    AddToSlot(7, "CrimsonPeriastron")
+    AddToSlot(8, "RainbowPeriastron")
+    AddToSlot(9, "BlackPantherDagger")
+    AddToSlot(0, "SnowyGravityCoil")
+
+end)
 
 
 
