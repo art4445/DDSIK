@@ -12528,32 +12528,65 @@ end)
 
 
 addcmd('sethotbar', {'sethb'}, function(args, speaker)
-    local hum = speaker.Character.Humanoid
+    local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
     local char = speaker.Character
     local backp = speaker.Backpack
 
-    local hot = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui.Backpack.Hotbar
+    local hotbarGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("BackpackGui", 5)
+    if not hotbarGui then
+        notify("sethotbar", "Ошибка: GUI 'BackpackGui' не найден!")
+        return
+    end
 
-    -- Проверка, что все ячейки пусты
+    local hotbar = hotbarGui:FindFirstChild("Backpack") and hotbarGui.Backpack:FindFirstChild("Hotbar")
+    if not hotbar then
+        notify("sethotbar", "Ошибка: Hotbar не найден!")
+        return
+    end
+
+    -- Проверка на занятость хотбара
     for i = 0, 9 do
-        local slot = hot:FindFirstChild(tostring(i))
+        local slot = hotbar:FindFirstChild(tostring(i))
         if slot and slot.ToolName.Text ~= "" then
-            notify("sethotbar", "Хотбар не пуст. Очистите его перед использованием команды.")
+            notify("sethotbar", "Ошибка: Хотбар должен быть пустым!")
             return
         end
     end
 
-    -- Функция для установки инструмента в слот
     local function AddToSlot(key, tool)
         hum:UnequipTools()
-        wait()
-        execCmd("et " .. tool)
-        wait()
-        execCmd("permhold 1")
-        hum:UnequipTools()
+        task.wait()
+
+        local slot = hotbar:FindFirstChild(tostring(key))
+        if not slot then return end
+
+        local toolname = slot.ToolName.Text
+        if toolname == tool then return end
+
+        local slottool = backp:FindFirstChild(toolname)
+        if slottool then
+            slottool.Parent = char
+            task.wait()
+            execCmd("permhold 1")
+
+            local newslottool = backp:WaitForChild(slottool.Name, 6)
+            task.wait()
+            if newslottool then
+                execCmd("dst")
+                execCmd("et " .. tool)
+                task.wait()
+                execCmd("permhold 1")
+                local addedtool = backp:WaitForChild(tool, 6)
+                hum:UnequipTools()
+            end
+        else
+            execCmd("et " .. tool)
+            task.wait()
+            execCmd("permhold 1")
+            hum:UnequipTools()
+        end
     end
 
-    -- Установка оружия в хотбар
     AddToSlot(1, "IvoryPeriastron")
     AddToSlot(2, "ChartreusePeriastron")
     AddToSlot(3, "DaggerOfShatteredDimensions")
@@ -12564,6 +12597,8 @@ addcmd('sethotbar', {'sethb'}, function(args, speaker)
     AddToSlot(8, "RainbowPeriastron")
     AddToSlot(9, "BlackPantherDagger")
     AddToSlot(0, "SnowyGravityCoil")
+
+    notify("sethotbar", "Хотбар успешно настроен")
 end)
 
 
