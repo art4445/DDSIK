@@ -12568,7 +12568,6 @@ addcmd('sethotbar', {'sethb'}, function(args, speaker)
     AddToSlot(7, "CrimsonPeriastron")
     AddToSlot(8, "RainbowPeriastron")
     AddToSlot(9, "BlackPantherDagger")
-    AddToSlot(0, "SnowyGravityCoil")
 
 end)
 
