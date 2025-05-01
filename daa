@@ -12528,77 +12528,59 @@ end)
 
 
 addcmd('sethotbar', {'sethb'}, function(args, speaker)
-    local hum = speaker.Character:FindFirstChildOfClass("Humanoid")
-    local char = speaker.Character
-    local backp = speaker.Backpack
+	local hum = speaker.Character.Humanoid
+	local char = speaker.Character
+	local backp = speaker.Backpack
 
-    local hotbarGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("BackpackGui", 5)
-    if not hotbarGui then
-        notify("sethotbar", "Ошибка: GUI 'BackpackGui' не найден!")
-        return
-    end
+	local hot = game:GetService("Players").LocalPlayer.PlayerGui.BackpackGui.Backpack.Hotbar
 
-    local hotbar = hotbarGui:FindFirstChild("Backpack") and hotbarGui.Backpack:FindFirstChild("Hotbar")
-    if not hotbar then
-        notify("sethotbar", "Ошибка: Hotbar не найден!")
-        return
-    end
+	-- Проверка: если хотя бы один слот не пуст, выводим ошибку и отменяем установку
+	for i = 0, 9 do
+		local slot = hot:FindFirstChild(tostring(i))
+		if slot and slot.ToolName and slot.ToolName.Text ~= "" then
+			notify("Hotbar", "Ошибка: Хотбар не пуст. Очистите его перед установкой.")
+			return
+		end
+	end
 
-    -- Проверка на занятость хотбара
-    for i = 0, 9 do
-        local slot = hotbar:FindFirstChild(tostring(i))
-        if slot and slot.ToolName.Text ~= "" then
-            notify("sethotbar", "Ошибка: Хотбар должен быть пустым!")
-            return
-        end
-    end
+	local function AddToSlot(key, tool)
+		hum:UnequipTools()
+		wait()
+		toolname = hot:FindFirstChild(tostring(key)).ToolName.Text
 
-    local function AddToSlot(key, tool)
-        hum:UnequipTools()
-        task.wait()
+		if toolname == tool then return end
 
-        local slot = hotbar:FindFirstChild(tostring(key))
-        if not slot then return end
+		local slottool = backp:FindFirstChild(toolname)
+		if slottool then
+			slottool.Parent = char
+			wait()
+			execCmd("permhold 1")
+		end
+		
+		local newslottool = backp:WaitForChild(toolname, 6)
+		wait()
+		if newslottool then
+			execCmd("dst")
+			execCmd("et " .. tool)
+			wait()
+			execCmd("permhold 1")
+			local addedtool = backp:WaitForChild(tool, 6)
+			hum:UnequipTools()
+		end
+	end
 
-        local toolname = slot.ToolName.Text
-        if toolname == tool then return end
+	AddToSlot(1, "CrescendoTheSoulStealer")
+	AddToSlot(2, "RainbowMagicCarpet")
+	AddToSlot(3, "TelamonsterTheChaosEdge")
+	AddToSlot(4, "TriLaserGun")
+	AddToSlot(5, "GiantAnimeMallet")
+	AddToSlot(6, "WintersGreatSword")
+	AddToSlot(7, "ElixirOfDreams")
+	AddToSlot(8, "IvoryPeriastron")
+	AddToSlot(9, "BlackPantherDagger")
+	AddToSlot(0, "SnowyGravityCoil")
 
-        local slottool = backp:FindFirstChild(toolname)
-        if slottool then
-            slottool.Parent = char
-            task.wait()
-            execCmd("permhold 1")
-
-            local newslottool = backp:WaitForChild(slottool.Name, 6)
-            task.wait()
-            if newslottool then
-                execCmd("dst")
-                execCmd("et " .. tool)
-                task.wait()
-                execCmd("permhold 1")
-                local addedtool = backp:WaitForChild(tool, 6)
-                hum:UnequipTools()
-            end
-        else
-            execCmd("et " .. tool)
-            task.wait()
-            execCmd("permhold 1")
-            hum:UnequipTools()
-        end
-    end
-
-    AddToSlot(1, "IvoryPeriastron")
-    AddToSlot(2, "ChartreusePeriastron")
-    AddToSlot(3, "DaggerOfShatteredDimensions")
-    AddToSlot(4, "TelamonsterTheChaosEdge")
-    AddToSlot(5, "WintersGreatSword")
-    AddToSlot(6, "GiantAnimeMallet")
-    AddToSlot(7, "CrimsonPeriastron")
-    AddToSlot(8, "RainbowPeriastron")
-    AddToSlot(9, "BlackPantherDagger")
-    AddToSlot(0, "SnowyGravityCoil")
-
-    notify("sethotbar", "Хотбар успешно настроен")
+	notify("Hotbar", "Хотбар успешно установлен!")
 end)
 
 
