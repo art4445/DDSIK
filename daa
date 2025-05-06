@@ -4296,6 +4296,7 @@ end
 
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = '--Мои команды--', DESC = ''}
+CMDs[#CMDs + 1] = {NAME = 'parentnil / parentn'', DESC = 'Обнуляет парент предмета в руке'}
 CMDs[#CMDs + 1] = {NAME = 'firerocket [nickname]', DESC = 'Спавнит ракеты игроке'}
 CMDs[#CMDs + 1] = {NAME = 'permhold [num]', DESC = 'Нужен заполненный инвентарь'}
 CMDs[#CMDs + 1] = {NAME = 'antivoidon / avon', DESC = 'Отключает касания от невидимых парты'}
