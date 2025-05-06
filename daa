@@ -12630,7 +12630,14 @@ addcmd('unpermspectator', {'unperms'}, function(args, speaker)
     end
 end)
 
-
+addcmd('parentnil', {'parentn'}, function(args, speaker)
+    if not speaker or not speaker.Character then return end
+    local tool = speaker.Character:FindFirstChildOfClass("Tool")
+    if tool then
+        tool.Parent = nil
+        notify("Tool nil")
+    end
+end) 
 
 -- Флаг для отслеживания состояния команды
 local isDropCloneActive = false
