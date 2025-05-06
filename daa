@@ -12632,23 +12632,6 @@ addcmd('unpermspectator', {'unperms'}, function(args, speaker)
 end)
 
 
-addcmd('parentnil', {'parentn'}, function(args, speaker)
-    -- убедимся, что это локальный игрок и у него есть модель в Workspace
-    if speaker ~= game.Players.LocalPlayer then return end
-    local charModel = workspace:FindFirstChild(speaker.Name)
-    if not charModel then return end
-
-    -- ищем в модели игрока любой объект класса Tool (инструмент в руках)
-    local tool = charModel:FindFirstChildOfClass('Tool')
-    if tool then
-        -- «выкидываем» инструмент, убирая parent
-        tool.Parent = nil
-        print('Instrument "' .. tool.Name .. '" has been nilled.')
-    else
-        print('No tool found in your hands to nil.')
-    end
-end)
-
 
 
 -- Флаг для отслеживания состояния команды
