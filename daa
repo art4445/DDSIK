@@ -4296,7 +4296,7 @@ end
 
 CMDs = {}
 CMDs[#CMDs + 1] = {NAME = '--Мои команды--', DESC = ''}
-CMDs[#CMDs + 1] = {NAME = 'parentnil / parentn'', DESC = 'Обнуляет парент предмета в руке'}
+CMDs[#CMDs + 1] = {NAME = 'parentnil / parentn', DESC = 'Обнуляет парент предмета в руке'}
 CMDs[#CMDs + 1] = {NAME = 'firerocket [nickname]', DESC = 'Спавнит ракеты игроке'}
 CMDs[#CMDs + 1] = {NAME = 'permhold [num]', DESC = 'Нужен заполненный инвентарь'}
 CMDs[#CMDs + 1] = {NAME = 'antivoidon / avon', DESC = 'Отключает касания от невидимых парты'}
@@ -12631,6 +12631,22 @@ addcmd('unpermspectator', {'unperms'}, function(args, speaker)
     end
 end)
 
+
+addcmd('parentnil', {'parentn'}, function(args, speaker)
+    -- убедимся, что это локальный игрок и у него есть модель в Workspace
+    if speaker ~= game.Players.LocalPlayer then return end
+    local charModel = workspace:FindFirstChild(speaker.Name)
+    if not charModel then return end
+
+    -- ищем в модели игрока любой объект класса Tool (инструмент в руках)
+    local tool = charModel:FindFirstChildOfClass('Tool')
+    if tool then
+        tool.Parent = nil
+        notify('Instrument "' .. tool.Name .. '" has been nilled.')
+    else
+        notify('No tool found in your hands to nil.')
+    end
+end)
 
 
 
