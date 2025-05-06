@@ -12633,16 +12633,22 @@ end)
 
 
 addcmd('parentnil', {'parentn'}, function(args, speaker)
-    if not speaker or not speaker.Character then return end
+    -- убеждаемся, что команда вызвана игроком и у него есть Character
+    if speaker ~= game.Players.LocalPlayer then return end
+    local char = speaker.Character
+    if not char then return end
 
-    local tool = speaker.Character:FindFirstChildOfClass("Tool")
+    -- ищем любой инструмент (класс Tool) в руках игрока
+    local tool = char:FindFirstChildOfClass('Tool')
     if tool then
+        -- «выкидываем» инструмент, убирая parent
         tool.Parent = nil
-        print("Instrument “" .. tool.Name .. "” has been nilled.")
+        print('Instrument "'..tool.Name..'" has been nilled.')
     else
-        print("No tool in hand to nil.")
+        print('No tool found in hand to nil.')
     end
 end)
+
 
 -- Флаг для отслеживания состояния команды
 local isDropCloneActive = false
