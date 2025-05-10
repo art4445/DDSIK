@@ -12450,7 +12450,7 @@ end)
 
 
 
-addcmd("giveblocks", {}, function(args, speaker)
+addcmd("giveblockss", {}, function(args, speaker)
 	for _ = 1,100 do
 		ReplicatedStorage.SpawnGalaxyBlock:FireServer()
 	end
