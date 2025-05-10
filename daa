@@ -13307,25 +13307,19 @@ eventEditor.Refresh()
 
 -- Таблица с эвентами
 local NEWeventBinds = {
-    ["OnSpawn"] = {
-        {COMMAND = "giveblocks", DELAY = 0},
-	{COMMAND = "giveblocks", DELAY = 0.5}
-    },
+    ["OnSpawn"] = {},
     ["OnDied"] = {
 	{COMMAND = "spawnhp", DELAY = 10},
 	{COMMAND = "sethotbar", DELAY = 25}
     },
     ["OnExecute"] = {
-        {COMMAND = "giveblocks", DELAY = 0},
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antivoidon", DELAY = 5},
 	{COMMAND = "def", DELAY = 1},
 	{COMMAND = "sethotbar", DELAY = 20}
     },
     ["OnKilled"] = {},
-    ["OnJoin"] = {
-        {COMMAND = "giveblocks", DELAY = 0},
-    },
+    ["OnJoin"] = {},
     ["OnLeave"] = {},
     ["OnDamage"] = {},
     ["OnChatted"] = {}
