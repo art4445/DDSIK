@@ -12471,6 +12471,48 @@ addcmd("giveblocks", {}, function(args, speaker)
 	end
 end)
 
+addcmd("giveblocks2", {}, function(args, speaker)
+	for _ = 1,200 do
+		ReplicatedStorage.SpawnLuckyBlock:FireServer()
+	end
+end)
+
+addcmd("giveblocks5", {}, function(args, speaker)
+	for _ = 1,100 do
+		ReplicatedStorage.SpawnGalaxyBlock:FireServer()
+	end
+end)
+
+addcmd("giveblocks4", {}, function(args, speaker)
+	for _ = 1,100 do
+		ReplicatedStorage.SpawnRainbowBlock:FireServer()
+	end
+end)
+
+addcmd("giveblocks2", {}, function(args, speaker)
+	for _ = 1,200 do
+		ReplicatedStorage.SpawnSuperBlock:FireServer()
+	end
+end)
+
+addcmd("giveblocks3", {}, function(args, speaker)
+	for _ = 1,100 do
+		ReplicatedStorage.SpawnDiamondBlock:FireServer()
+	end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
 addcmd('copytoolname', {'ctn'}, function(args, speaker)
     local character = speaker.Character or speaker.CharacterAdded:Wait()
     if not character then
