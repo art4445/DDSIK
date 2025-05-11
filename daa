@@ -12450,7 +12450,7 @@ end)
 
 
 
-addcmd("giveblockss", {}, function(args, speaker)
+addcmd("giveblocks", {}, function(args, speaker)
 	for _ = 1,100 do
 		ReplicatedStorage.SpawnGalaxyBlock:FireServer()
 	end
@@ -13307,22 +13307,36 @@ eventEditor.Refresh()
 
 -- Таблица с эвентами
 local NEWeventBinds = {
-    ["OnSpawn"] = {},
+    ["OnSpawn"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    },
     ["OnDied"] = {
-	{COMMAND = "spawnhp", DELAY = 10},
+	{COMMAND = "spawnhp", DELAY = 1},
+	{COMMAND = "giveblocks", DELAY = 0.5},
 	{COMMAND = "sethotbar", DELAY = 25}
     },
     ["OnExecute"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5},
 	{COMMAND = "spawnhp", DELAY = 5},
 	{COMMAND = "antivoidon", DELAY = 5},
 	{COMMAND = "def", DELAY = 1},
 	{COMMAND = "sethotbar", DELAY = 20}
     },
-    ["OnKilled"] = {},
-    ["OnJoin"] = {},
-    ["OnLeave"] = {},
-    ["OnDamage"] = {},
-    ["OnChatted"] = {}
+    ["OnKilled"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    },
+    ["OnJoin"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    },
+    ["OnLeave"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    },
+    ["OnDamage"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    },
+    ["OnChatted"] = {
+	{COMMAND = "giveblocks", DELAY = 0.5}
+    }
 }
 
 -- Функция обработки команд для эвента
