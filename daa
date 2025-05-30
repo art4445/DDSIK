@@ -12538,30 +12538,27 @@ end)
 
 
 function kill(speaker, target, fast)
-
+    if not target or not target.Character then return end
     
     local targetHRP = target.Character:FindFirstChild('Head') or target.Character:FindFirstChild('HumanoidRootPart')
-    local targetVelocity = targetHRP.Velocity
+    if not targetHRP then return end
     
-    local rocketSpeed = 0.5 -- Скорость ракеты
+    local targetVelocity = targetHRP.Velocity
+    local rocketSpeed = 0.5
 
-
-    -- Предполагаемая позиция цели с учётом её скорости и ускорения
+    -- Рассчитываем будущее положение цели
     local futurePosition
-
-    -- Рассчитываем будущее положение цели с учетом скорости и ускорения
     if targetVelocity.Magnitude > 0 then
         futurePosition = targetHRP.Position + targetVelocity * rocketSpeed 
     else
         futurePosition = targetHRP.Position
     end
 
-    -- Позиция спавна ракеты на расстоянии двух единичных векторов скорости от будущей позиции цели
+    -- Позиция спавна ракеты
     local spawnPosition
     if targetVelocity.Magnitude > 0 then
         spawnPosition = futurePosition + (targetVelocity.Unit * 1)
     else
-        -- Если скорость равна нулю, спавним ракету на небольшом расстоянии от цели
         spawnPosition = futurePosition + Vector3.new(2, 2, 2)
     end
 
@@ -12573,30 +12570,52 @@ function kill(speaker, target, fast)
     game:GetService("Players").LocalPlayer.Backpack.RocketJumper.FireRocket:FireServer(futurePosition, spawnPosition)
 end
 
-local killbool = false
+local killServ = nil
 
-addcmd('firerocketkill',{'frkill'},function(args, speaker)
+addcmd('firerocketkill', {'frkill'}, function(args, speaker)
     if killServ then killServ:Disconnect() end
-	--local delay = tonumber(args[2]) or 0.003
-	--killbool = true
-    killServ = RunService.RenderStepped:Connect(function()
-	--while killbool do
-        local players = getPlayer(args[1], speaker)
-        for i, v in pairs(players) do
-			task.spawn(function(parameters)
-				kill(speaker, Players[v])
-			end)  
+    
+    -- Получаем список целей (поддерживает частичные имена и несколько игроков)
+    local targets = {}
+    if args[1] then
+        -- Разделяем ввод по запятым и обрабатываем каждого игрока
+        for _, namePattern in ipairs(string.split(args[1], ",")) do
+            namePattern = string.trim(namePattern)
+            if namePattern ~= "" then
+                local foundPlayers = getPlayer(namePattern, speaker)
+                for _, playerName in ipairs(foundPlayers) do
+                    local player = game.Players:FindFirstChild(playerName)
+                    if player and player.Character then
+                        table.insert(targets, player)
+                    end
+                end
+            end
         end
-		--wait(delay)
-	--end
+    end
+    
+    -- Если целей нет - используем говорящего (speaker)
+    if #targets == 0 then
+        if speaker and speaker.Character then
+            table.insert(targets, speaker)
+        else
+            return
+        end
+    end
+
+    -- Запускаем цикл атаки
+    killServ = RunService.RenderStepped:Connect(function()
+        for _, target in ipairs(targets) do
+            task.spawn(kill, speaker, target)
+        end
     end)
 end)
 
 addcmd("firerocketstop", {'frstop'}, function(args, speaker)
-    if killServ then killServ:Disconnect() end
-	--killbool = false
+    if killServ then 
+        killServ:Disconnect()
+        killServ = nil
+    end
 end)
-
 
 
 
