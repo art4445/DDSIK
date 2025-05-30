@@ -4308,8 +4308,7 @@ CMDs[#CMDs + 1] = {NAME = 'copytoolname / ctn', DESC = 'Копирует наз�
 CMDs[#CMDs + 1] = {NAME = 'spawnhp', DESC = 'Делает автоматически инф хп'}
 CMDs[#CMDs + 1] = {NAME = 'clsetup', DESC = 'Делает клона'}
 CMDs[#CMDs + 1] = {NAME = 'BoneSword / BS', DESC = 'Одевает кост меч в руки'}
-CMDs[#CMDs + 1] = {NAME = 'dropclone / drc', DESC = 'Имитирует касания к EnergySword'}
-CMDs[#CMDs + 1] = {NAME = 'stopdropclone / stopdrc', DESC = 'Отключает имитирумые касания к EnergySword'}
+CMDs[#CMDs + 1] = {NAME = 'dropclone', DESC = 'Имитирует EnergySword'}
 CMDs[#CMDs + 1] = {NAME = 'sethotbar / sethb', DESC = 'Хотбар'}
 CMDs[#CMDs + 1] = {NAME = 'permspectator / perms', DESC = 'Делает пермспектатор'}
 CMDs[#CMDs + 1] = {NAME = 'unpermspectator / umperms', DESC = 'Останавливает пермспектатор'}
@@ -12759,82 +12758,49 @@ end)
 
 
 
--- Флаг для отслеживания состояния команды
-local isDropCloneActive = false
-local hkillstop = false
+addcmd('dropclone', {}, function(args, speaker)
+    local character = speaker.Character or speaker.CharacterAdded:Wait()
+    local torso = character:FindFirstChild("Torso")
+    if not torso then return end
 
--- Функция для запуска команды
-addcmd('dropclone', {'drc'}, function(args, speaker)
-    local RS = game:GetService("RunService").RenderStepped
-    isDropCloneActive = true  -- Активируем команду
-    hkillstop = false  -- Сбрасываем флаг остановки, чтобы можно было снова запустить
+    local removedRightGrips = {}
 
-    -- Поиск клона, у которого есть EnergySword
-    local clone = nil
-    for _, obj in pairs(workspace:GetChildren()) do
-        if obj:IsA("Model") and obj:FindFirstChild("EnergySword") then
-            local tool = obj:FindFirstChild("EnergySword")
-            local handle = tool:FindFirstChild("Handle")
-            if handle then
-                clone = obj
-                break
+    local function findAliveClone()
+        for , obj in ipairs(workspace:GetChildren()) do
+            if typeof(obj.Name) == "string" and string.find(obj.Name, "'s Clone") then
+                local rightArm = obj:FindFirstChild("Right Arm")
+                local energySword = obj:FindFirstChild("EnergySword")
+                local swordHandle = energySword and energySword:FindFirstChild("Handle")
+                local humanoid = obj:FindFirstChildOfClass("Humanoid")
+                if rightArm and swordHandle and humanoid and humanoid.Health > 0 and obj.Parent == workspace then
+                    return obj, rightArm, swordHandle
+                end
             end
         end
+        return nil, nil, nil
     end
 
-    if not clone then
-        isDropCloneActive = false  -- Деактивируем команду, если клона нет
-        return notify("Handle Kill", "Клон с EnergySword не найден в рабочем пространстве.")
-    end
-    
-    -- Проверка наличия EnergySword и Handle у клона
-    local Tool = clone:FindFirstChild("EnergySword")
-    local Handle = Tool and Tool:FindFirstChild("Handle")
-    
-    if not Tool or not Handle then
-        isDropCloneActive = false  -- Деактивируем команду, если у клона нет нужных объектов
-        return notify("Handle Kill", "Необходимо, чтобы клон держал \"EnergySword\" с ручкой для касания.")
-    end
-    
-    task.spawn(function()
-        while Tool and clone and speaker and speaker.Character and Tool.Parent == clone and isDropCloneActive do
-            local Human = clone:FindFirstChildWhichIsA("Humanoid")
-            if not Human or hkillstop then
-                break
-            end
+    local clone, rightArm, swordHandle = findAliveClone()
+    if clone and rightArm and swordHandle and torso then
+        local originalCFrame = swordHandle.CFrame
 
-            if Human.Health <= 0 then
-                clone:Destroy()
-                break
-            end
-
-            local v1 = speaker.Character:FindFirstChild("Torso")
-            if v1 and v1:IsA("BasePart") then
-                newtouch(v1, Handle, 1, false)
-                --firetouchinterest(Handle, v1, 1)
-                wait()
-                --firetouchinterest(Handle, v1, 0)
+        for , child in ipairs(rightArm:GetChildren()) do
+            if child.Name == "RightGrip" then
+                table.insert(removedRightGrips, child)
+                child.Parent = nil
             end
         end
 
-        -- Убедимся, что speaker существует перед доступом к его имени
-        if speaker and speaker.Name then
-            notify("Handle Kill Stopped!", speaker.Name .. " умер/вышел или вы убрали инструмент!")
-        else
-            notify("Handle Kill Stopped!", "Неизвестный игрок завершил команду.")
-        end
+        swordHandle.CFrame = torso.CFrame
 
-        isDropCloneActive = false  -- Деактивируем команду по завершении
-    end)
+        task.delay(0.05, function()
+            for _, grip in ipairs(removedRightGrips) do
+                grip.Parent = rightArm
+            end
+            swordHandle.CFrame = originalCFrame
+        end)
+    end
 end)
-
--- Команда для остановки
-addcmd('stopdropclone', {'stopdrc'}, function(args, speaker)
-    isDropCloneActive = false  -- Останавливаем команду
-    hkillstop = true
-    notify("Handle Kill", "Команда 'dropclone' была остановлена.")
-end)
-
 
 
 
