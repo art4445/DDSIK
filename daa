@@ -12694,6 +12694,55 @@ end)
 
 
 
+
+addcmd('dropclone', {}, function(args, speaker)
+    local character = speaker.Character or speaker.CharacterAdded:Wait()
+    local torso = character:FindFirstChild("Torso")
+    if not torso then return end
+
+    local removedRightGrips = {}
+
+    local function findAliveClone()
+        for _, obj in ipairs(workspace:GetChildren()) do
+            if typeof(obj.Name) == "string" and string.find(obj.Name, "'s Clone") then
+                local rightArm = obj:FindFirstChild("Right Arm")
+                local energySword = obj:FindFirstChild("EnergySword")
+                local swordHandle = energySword and energySword:FindFirstChild("Handle")
+                local humanoid = obj:FindFirstChildOfClass("Humanoid")
+                if rightArm and swordHandle and humanoid and humanoid.Health > 0 and obj.Parent == workspace then
+                    return obj, rightArm, swordHandle
+                end
+            end
+        end
+        return nil, nil, nil
+    end
+
+    local clone, rightArm, swordHandle = findAliveClone()
+    if clone and rightArm and swordHandle and torso then
+        local originalCFrame = swordHandle.CFrame
+
+        for _, child in ipairs(rightArm:GetChildren()) do
+            if child.Name == "RightGrip" then
+                table.insert(removedRightGrips, child)
+                child.Parent = nil
+            end
+        end
+
+        swordHandle.CFrame = torso.CFrame
+
+        task.delay(0.05, function()
+            for _, grip in ipairs(removedRightGrips) do
+                grip.Parent = rightArm
+            end
+            swordHandle.CFrame = originalCFrame
+        end)
+    end
+end)
+
+
+
+
+
 addcmd('permspectator', {'perms'}, function(args, speaker)
     if speaker ~= game:GetService("Players").LocalPlayer then return end
 
@@ -12758,49 +12807,6 @@ end)
 
 
 
-addcmd('dropclone', {}, function(args, speaker)
-    local character = speaker.Character or speaker.CharacterAdded:Wait()
-    local torso = character:FindFirstChild("Torso")
-    if not torso then return end
-
-    local removedRightGrips = {}
-
-    local function findAliveClone()
-        for , obj in ipairs(workspace:GetChildren()) do
-            if typeof(obj.Name) == "string" and string.find(obj.Name, "'s Clone") then
-                local rightArm = obj:FindFirstChild("Right Arm")
-                local energySword = obj:FindFirstChild("EnergySword")
-                local swordHandle = energySword and energySword:FindFirstChild("Handle")
-                local humanoid = obj:FindFirstChildOfClass("Humanoid")
-                if rightArm and swordHandle and humanoid and humanoid.Health > 0 and obj.Parent == workspace then
-                    return obj, rightArm, swordHandle
-                end
-            end
-        end
-        return nil, nil, nil
-    end
-
-    local clone, rightArm, swordHandle = findAliveClone()
-    if clone and rightArm and swordHandle and torso then
-        local originalCFrame = swordHandle.CFrame
-
-        for , child in ipairs(rightArm:GetChildren()) do
-            if child.Name == "RightGrip" then
-                table.insert(removedRightGrips, child)
-                child.Parent = nil
-            end
-        end
-
-        swordHandle.CFrame = torso.CFrame
-
-        task.delay(0.05, function()
-            for _, grip in ipairs(removedRightGrips) do
-                grip.Parent = rightArm
-            end
-            swordHandle.CFrame = originalCFrame
-        end)
-    end
-end)
 
 
 
